@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1.  事务的 4 个基本要素 ACID 是数据库事务处理的 4 个基本要素.   原子性 Atomicity 原子性是指数据库的事务是一个不可分割的工作单位, 只有数据库事务都成功才算成功,任何一个SQL的失败, 数据库状态都必须回退到事务开始前的状态   一致性 Consistency 一致性是指事务将数据库的状态从一种状态转变为下一个一致的状态. 在事务的开始和结束后, 数据库的完整性约束都">
+<meta property="og:type" content="article">
+<meta property="og:title" content="事务">
+<meta property="og:url" content="https://ravenfu.github.io/posts/database/93ac284c/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="1.  事务的 4 个基本要素 ACID 是数据库事务处理的 4 个基本要素.   原子性 Atomicity 原子性是指数据库的事务是一个不可分割的工作单位, 只有数据库事务都成功才算成功,任何一个SQL的失败, 数据库状态都必须回退到事务开始前的状态   一致性 Consistency 一致性是指事务将数据库的状态从一种状态转变为下一个一致的状态. 在事务的开始和结束后, 数据库的完整性约束都">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-01-16T07:24:34.000Z">
+<meta property="article:modified_time" content="2020-09-11T07:49:06.617Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="transaction">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/database/93ac284c/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>事务 | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/database/93ac284c/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          事务
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-16 15:24:34" itemprop="dateCreated datePublished" datetime="2019-01-16T15:24:34+08:00">2019-01-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 15:49:06" itemprop="dateModified" datetime="2020-09-11T15:49:06+08:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/database/" itemprop="url" rel="index"><span itemprop="name">database</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="事务的-4-个基本要素">1.  事务的 4 个基本要素</h1>
+<p>ACID 是数据库事务处理的 4 个基本要素.</p>
+<ol>
+<li>
+<p>原子性 Atomicity<br>
+原子性是指数据库的事务是一个不可分割的工作单位, 只有数据库事务都成功才算成功,任何一个SQL的失败, 数据库状态都必须回退到事务开始前的状态</p>
+</li>
+<li>
+<p>一致性 Consistency<br>
+一致性是指事务将数据库的状态从一种状态转变为下一个一致的状态. 在事务的开始和结束后, 数据库的完整性约束都没有被破坏.</p>
+</li>
+<li>
+<p>隔离性 Isolation<br>
+隔离性是指事务之间对数据对象的读写是相互隔离的, 具体是提交后可见还是提交后也不可见取决于隔离等级, 前面两种情况分别为提交读(RC)和可重复读(RR).</p>
+</li>
+<li>
+<p>持久性 Durability<br>
+持久性是指事务一旦提交, 其修改是永久性的, 即使还未写入磁盘时发生宕机, 也能恢复数据.</p>
+</li>
+</ol>
+<p>一个支持事务的数据库, 必须具有这 4 个特性, 否则在事务过程中无法保证事务的正确性.</p>
+<p>事务的隔离性是通过数据库锁的机制实现的, 持久性通过 Redo Log 来实现, 原子性和一致性通过 Undo Log 来实现.</p>
+<p>Undo Log 的原理很简单, 为了满足事务的原子性, 在操作任何数据之前, 首先将数据备份到一个地方, 这个存储数据备份的地方称为 Undo Log, 然后进行数据的修改. 如果出现了错误或者用户执行了 Rollback 语句, 系统可以利用 Undo Log 中的备份将数据恢复到事务开始之前的状态.<br>
+和 Undo Log 相反, Redo Log 记录的是新数据的备份. 在事务提交前, 只要将 Redo Log 持久化即可, 不需要将数据持久化. 当系统崩溃时, 虽然数据没有持久化, 但是 Redo Log 已经持久化. 系统可以根据 Redo Log 的内容, 将所有数据恢复到最新的状态.</p>
+<h1 id="事务的隔离级别">2.  事务的隔离级别</h1>
+<p>事务有以下 4 个隔离级别:</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读</th>
+<th>不可重复读　｜ 幻读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读未提交 Read Uncommitted</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>读已提交 Read committed</td>
+<td>N</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>可重复读 Repeatable</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr>
+<td>可串行化 Serializable</td>
+<td>N</td>
+<td>N</td>
+</tr>
+</tbody>
+</table>
+<p>默认的事务隔离级别是 <code>可重复读</code>.<br>
+事务的隔离级别影响系统的并发处理能力, 级别越高, 越能保证事务的一致性, 对性能影响也越大.</p>
+<p>之所以这样划分, 是因为并发事务会有以下 3 个问题:</p>
+<ol>
+<li>脏读</li>
+</ol>
+<p>即一个事务中还没有提交的数据, 被另外一个事务读到了.<br>
+如: 事务 A 开启事务从账户中取走 100 元; 但事务 A 还没提交前, 事务 B 来获取账户中余额, 发现并没有减少.</p>
+<ol start="2">
+<li>不可重复读</li>
+</ol>
+<p>即在一个事务里面读取了两次某个数据, 读出来的数据不一致.<br>
+如: 事务 A 开启事务查询账户中余额为 1000 元; 同时事务 B 取走账户中 100 元, 并提交; 而事务 A 还没有结束, 又查询了一次账户余额, 发现账户中的余额为 900 元.</p>
+<ol start="3">
+<li>幻读</li>
+</ol>
+<p>即在一个事务里面的操作中发现了未被操作的数据.<br>
+如: 事务 A 开启事务要更新一批数据; 同时事务 B 往数据库中插入一条记录, 并提交; 之后事务 A 提交事务时发现有一条记录没有更新到.</p>
+<p>不可重复读和幻读的区别在于:<br>
+不可重复读是在一个事务中记录发生 <code>变更</code>, 需要通过行级锁解决;<br>
+幻读是在事务中表中数据发生了 <code>新增</code> 或 <code>删除</code>, 同通过表级锁解决.</p>
+<h2 id="事务隔离的实现方式">2.1.  事务隔离的实现方式</h2>
+<p>事务隔离的实现方式基本可分为 2 种:</p>
+<ol>
+<li>
+<p>在读取数据前, 对其加锁, 阻止其他事务对数据进行修改.</p>
+</li>
+<li>
+<p>不用加任何锁, 通过一定机制生成一个数据请求时间点的一致性数据快照 (Snapshot), 并用这个快照来提供一定级别(语句级或事务级)的一致性读取. 从用户的角度来看, 好像是数据库可以提供同一数据的多个版本, 因此, 这种技术叫做数据多版本并发控制 (MultiVersion Concurrency Control, 简称MVCC), 也经常称为多版本数据库.</p>
+</li>
+</ol>
+<h3 id="mvcc">2.1.1.  MVCC</h3>
+<p>Innodb MVCC主要是为 Repeatable-Read 事务隔离级别做的. 在此隔离级别下, A, B客户端所示的数据相互隔离, 互相更新不可见.</p>
+<p>了解 Innodb 的行结构, Read-View 的结构对于理解 Innodb MVCC 的实现由重要意义.</p>
+<p>Innodb 存储的最基本 row 中包含一些额外的存储信息 <code>DATA_TRX_ID</code>, <code>DATA_ROLL_PTR</code>, <code>DB_ROW_ID</code>, <code>DELETE_BIT</code>.<br>
+6 个字节的 <code>DATA_TRX_ID</code> 标记了最新更新这条行记录的事务 ID, 每处理一个事务, 其值自动 +1.<br>
+7 个字节的 <code>DATA_ROLL_PTR</code> 指向当前记录项的 rollback segment 的 undo log 记录, 找之前版本的数据就是通过这个指针.<br>
+6 个字节的 <code>DB_ROW_ID</code>, 当由 Innodb 自动产生聚集索引时, 聚集索引包括这个 <code>DB_ROW_ID</code> 的值, 否则聚集索引中不包括这个值.<br>
+<code>DELETE BIT</code> 位用于标识该记录是否被删除, 这里的不是真正的删除数据, 而是标志出来的删除.真正意义的删除是在commit的时候</p>
+<h1 id="更新丢失问题">3.  更新丢失问题</h1>
+<p>当两个或多个事务选择同一行, 然后基于最初选定的值更新该行时, 由于每个事务都不知道其他事务的存在, 就会发生丢失更新问题–最后的更新覆盖了由其他事务所做的更新.<br>
+对于这个问题, 需要开发人员在业务层控制, 规避这个问题的发生, 如使用全局锁等, 控制数据, 在同一时间只有一个人能访问同一数据资源.</p>
+<p><a href="https://blog.csdn.net/zx64881926/article/details/75150421" target="_blank" rel="noopener">https://blog.csdn.net/zx64881926/article/details/75150421</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/transaction/" rel="tag"># transaction</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/uncategorized/849a3ae4/" rel="prev" title="vscode">
+      <i class="fa fa-chevron-left"></i> vscode
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/design-pattern/65563eb2/" rel="next" title="Singleton">
+      Singleton <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#事务的-4-个基本要素"><span class="nav-number">1.</span> <span class="nav-text">1.  事务的 4 个基本要素</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#事务的隔离级别"><span class="nav-number">2.</span> <span class="nav-text">2.  事务的隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#事务隔离的实现方式"><span class="nav-number">2.1.</span> <span class="nav-text">2.1.  事务隔离的实现方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mvcc"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1.  MVCC</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更新丢失问题"><span class="nav-number">3.</span> <span class="nav-text">3.  更新丢失问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

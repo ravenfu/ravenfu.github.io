@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在程序执行期间具有不同的状态而其他方面都相似的对象会被分组到对象的类中, 这就是关键字class的由来 1.  访问控制    类 包 子孙类 外部包     public √ √ √   protected √ √ √   &lt;package&gt; √ √ ×   private √ × ×    1.1.  访问控制的意义 将程序开发人员按角色划分为类创建者(或者说库设计者, 那些创建新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="class">
+<meta property="og:url" content="https://ravenfu.github.io/posts/java/ed4b199f/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="在程序执行期间具有不同的状态而其他方面都相似的对象会被分组到对象的类中, 这就是关键字class的由来 1.  访问控制    类 包 子孙类 外部包     public √ √ √   protected √ √ √   &lt;package&gt; √ √ ×   private √ × ×    1.1.  访问控制的意义 将程序开发人员按角色划分为类创建者(或者说库设计者, 那些创建新">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-01-07T05:42:55.000Z">
+<meta property="article:modified_time" content="2020-09-11T07:49:16.534Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="grammar">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/java/ed4b199f/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>class | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/java/ed4b199f/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          class
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-01-07 13:42:55" itemprop="dateCreated datePublished" datetime="2018-01-07T13:42:55+08:00">2018-01-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 15:49:16" itemprop="dateModified" datetime="2020-09-11T15:49:16+08:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在程序执行期间具有不同的状态而其他方面都相似的对象会被分组到对象的类中, 这就是关键字class的由来</p>
+<h1 id="访问控制">1.  访问控制</h1>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>包</th>
+<th>子孙类</th>
+<th>外部包</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>public</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>protected</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>&lt;package&gt;</td>
+<td>√</td>
+<td>√</td>
+<td>×</td>
+</tr>
+<tr>
+<td>private</td>
+<td>√</td>
+<td>×</td>
+<td>×</td>
+</tr>
+</tbody>
+</table>
+<h2 id="访问控制的意义">1.1.  访问控制的意义</h2>
+<p>将程序开发人员按角色划分为类创建者(或者说库设计者, 那些创建新数据类型的程序员)和客户端程序员(那些在其应用中使用数据类型的消费者)</p>
+<ol>
+<li>让客户端程序员无法触及他们不应该触及的部分.<br>
+可以让客户端程序员很容易的看出哪些东西是重要的, 哪些可以忽略.</li>
+<li>允许库设计者可以改变内部的工作方式而不用担心会影响到客户端程序员</li>
+</ol>
+<h1 id="static-关键字">2.  static 关键字</h1>
+<p>通常来说, 当创建类时, 就是在描述那个类的对象的外观和行为.<br>
+除非用new创建那个类的对象, 否则, 实际上并未获得任何对象.<br>
+执行new来创建对象时, 数据存储空间才被分配, 其方法才供外界调用.</p>
+<p>有两种情形用上述方法是无法解决的.<br>
+一种情形是, 只想为某特定域分配单一存储空间, 而不去考虑究竟要创建多少对象, 甚至根本不创建任何对象.<br>
+另一种情形是, 希望某个方法不与包含它的类的任何对象关联在一起.<br>
+也就是说, 即使没有创建对象, 也能调用这个方法.</p>
+<p>通过static关键字可以满足这两方面的需要.</p>
+<p>有些面向对象语言采用<code>类数据</code>和<code>类方法</code>两个术语, 代表哪些数据和方法只是作为整个类, 而不是类的某个特定对象而存在.</p>
+<h1 id="类型转换">3.  类型转换</h1>
+<ul>
+<li>窄化转换<br>
+将能容纳更多信息的数据类型转换成无法容纳那么多信息的类型.<br>
+这可能面临数据丢失, 所以编译器会强制我们显式的进行类型转换.</li>
+<li>扩展转换<br>
+不必显式转换.<br>
+新类型一定能容纳原来类型的信息.</li>
+</ul>
+<h1 id="构造器">4.  构造器</h1>
+<p>构造器是最常见的方法重载.</p>
+<h1 id="this关键字">5.  this关键字</h1>
+<p>this表示<code>调用方法的那个对象</code>.</p>
+<p>如果在方法内部调用同一个类的另一个方法, 就不必使用this, 直接调用即可.</p>
+<p>常用在构造器方法重载中:</p>
+<ul>
+<li>调用this方法, 即在构造器中调用另外一个构造器.此方式必须将构造器调用置于方法最起始位置, 否则编译器会报错.</li>
+<li>若参数名称与数据成员名称相同, 可以用this明确指定数据成员, 防止产生歧义.</li>
+</ul>
+<h1 id="super关键字">6.  super关键字</h1>
+<h1 id="类的加载">7.  类的加载</h1>
+<p>classloader<br>
+JIT</p>
+<h1 id="abstract-class-interface">8.  abstract class &amp; interface</h1>
+<p>abstract class 和 interface 是支持抽象类定义的 2 种机制.</p>
+<p>它俩的异同:</p>
+<table>
+<thead>
+<tr>
+<th>abstract class</th>
+<th>interface</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>实例化</td>
+<td>不能</td>
+</tr>
+</tbody>
+</table>
+<h1 id="resource">9.  Resource</h1>
+<ul>
+<li>Java编程思想</li>
+</ul>
+<div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><code>平台相关的目标文件格式</code> 是指平台编译出来的 Class 文件无法在其他平台中使用. 相反, 正因为强制, 明确地定义了本来会跟平台相关的细节, 所以才达到了平台无关的效果.</span><a href="#fnref:1" rev="footnote"> ↩</a></li></ol></div></div>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/grammar/" rel="tag"># grammar</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/uncategorized/af154bcd/" rel="prev" title="reasoning">
+      <i class="fa fa-chevron-left"></i> reasoning
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/design/28588675/" rel="next" title="c10k">
+      c10k <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#访问控制"><span class="nav-number">1.</span> <span class="nav-text">1.  访问控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#访问控制的意义"><span class="nav-number">1.1.</span> <span class="nav-text">1.1.  访问控制的意义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#static-关键字"><span class="nav-number">2.</span> <span class="nav-text">2.  static 关键字</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类型转换"><span class="nav-number">3.</span> <span class="nav-text">3.  类型转换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#构造器"><span class="nav-number">4.</span> <span class="nav-text">4.  构造器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#this关键字"><span class="nav-number">5.</span> <span class="nav-text">5.  this关键字</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#super关键字"><span class="nav-number">6.</span> <span class="nav-text">6.  super关键字</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类的加载"><span class="nav-number">7.</span> <span class="nav-text">7.  类的加载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#abstract-class-interface"><span class="nav-number">8.</span> <span class="nav-text">8.  abstract class &amp; interface</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#resource"><span class="nav-number">9.</span> <span class="nav-text">9.  Resource</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

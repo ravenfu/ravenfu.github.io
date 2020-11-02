@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="SSO, Single Sign On, 单点登录 1.  应用场景 大型Web项目一般都有这样的开发场景:  项目子系统众多, 需要一个统一的登录系统, 用户只需要登录一次就可以访问其他信任的子系统应用. 子系统间依赖复杂, 前端页面间有相互跳转需求. 前后端分离, 各个系统间需要跨域访问.  2.  单点登录序列图   ticket SSO系统发放给前端页面的登录凭证, 之后交给子系统判断其有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单点登录">
+<meta property="og:url" content="https://ravenfu.github.io/posts/architecture/70e959e7/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="SSO, Single Sign On, 单点登录 1.  应用场景 大型Web项目一般都有这样的开发场景:  项目子系统众多, 需要一个统一的登录系统, 用户只需要登录一次就可以访问其他信任的子系统应用. 子系统间依赖复杂, 前端页面间有相互跳转需求. 前后端分离, 各个系统间需要跨域访问.  2.  单点登录序列图   ticket SSO系统发放给前端页面的登录凭证, 之后交给子系统判断其有">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ravenfu.github.io/posts/architecture/70e959e7/sso.png">
+<meta property="article:published_time" content="2017-10-12T07:11:57.000Z">
+<meta property="article:modified_time" content="2020-09-11T07:49:07.345Z">
+<meta property="article:author" content="Raven">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ravenfu.github.io/posts/architecture/70e959e7/sso.png">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/architecture/70e959e7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>单点登录 | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/architecture/70e959e7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          单点登录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-10-12 15:11:57" itemprop="dateCreated datePublished" datetime="2017-10-12T15:11:57+08:00">2017-10-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 15:49:07" itemprop="dateModified" datetime="2020-09-11T15:49:07+08:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/architecture/" itemprop="url" rel="index"><span itemprop="name">architecture</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>SSO, Single Sign On, 单点登录</p>
+<h1 id="应用场景">1.  应用场景</h1>
+<p>大型Web项目一般都有这样的开发场景:</p>
+<ul>
+<li>项目子系统众多, 需要一个统一的登录系统, 用户只需要登录一次就可以访问其他信任的子系统应用.</li>
+<li>子系统间依赖复杂, 前端页面间有相互跳转需求.</li>
+<li>前后端分离, 各个系统间需要跨域访问.</li>
+</ul>
+<h1 id="单点登录序列图">2.  单点登录序列图</h1>
+<img src="/posts/architecture/70e959e7/sso.png" class title="单点登录序列图">
+<ul>
+<li><code>ticket</code><br>
+SSO系统发放给前端页面的登录凭证, 之后交给子系统判断其有效性.<br>
+为了防止被拦截, ticket的存活时间极短, 一般设置为5秒左右.</li>
+<li><code>sid</code><br>
+即Session ID, 用户登录成功后的会话ID.<br>
+同一用户在各个系统间获得的sid应该不同, 以防止某个子系统泄露sid而影响其他子系统.<br>
+用户与sid之间是一对多的关系.</li>
+</ul>
+<ol>
+<li>用户在浏览器触发任意请求访问子系统.</li>
+<li>子系统验证请求的Cookie中是否有sid.<br>
+假设目前为首次登录, Cookie为空, 则返回未登录状态.</li>
+<li>子系统页面跳转到SSO系统的登录页面.</li>
+<li>用户输入相关登录信息(用户名, 密码, 验证码等), 请求登录验证.</li>
+<li>SSO系统验证用户信息, 生成ticket及用户信息;返回结果中将sid写入Cookie, 用于免登, 防止用户重复登录.</li>
+<li>浏览器跳转到回调页面, 该页面用于统一验证ticket, 可设计成空白页面.<br>
+若不用回调页面, 则需要每个页面都有处理ticket的能力.</li>
+<li>浏览器向子系统请求验证ticket.</li>
+<li>子系统向SSO系统请求验证ticket.</li>
+<li>SSO系统验证完成后销毁ticket, 并为子系统生成sid.<br>
+该sid与之前步骤5的sid不同, 原因之前已说明.</li>
+<li>子系统缓存用户相关信息, 返回登录状态.</li>
+<li>浏览器重新跳转到原url, 触发任意请求.</li>
+<li>子系统验证Cookie中是否sid.<br>
+若之前步骤都成功, 则此时Cookie一定带有sid.</li>
+<li>子系统从本地缓存中获取用户信息.<br>
+用户信息缓存时间不宜过长, 避免用户长时间不操作或不友好退出后, 占用缓存空间资源.<br>
+若无缓存信息, 则向SSO系统获取.</li>
+<li>子系统向SSO系统获取用户权限列表.<br>
+此步骤也可做缓存处理, 同样缓存时间也不宜过长.</li>
+<li>SSO系统查询并返回用户权限列表.</li>
+<li>子系统正常处理请求并返回处理结果.</li>
+</ol>
+<h1 id="缓存内容">3.  缓存内容</h1>
+<p>sid  --n–1--&gt; userid, loginTime, SubModuleID<br>
+userid --1–1--&gt; userInfo, permissionList</p>
+<h1 id="安全问题">4.  安全问题</h1>
+<ol>
+<li>ticket与sid应使用uuid类型的字符串, 防止暴力破解</li>
+<li>为了防止被拦截, ticket的存活时间极短, 一般设置为5秒左右.</li>
+<li>同一用户在各个系统间获得的sid应该不同, 以防止某个子系统泄露sid而影响其他子系统.</li>
+<li>缓存设置时间不宜过长, 一方面避免占用空间资源, 另一方面防止回话被劫持.可以用户触发接口后延期, 但到一定时间后必须销毁.</li>
+<li>在修改用户重要信息或权限后, 自动登出.</li>
+<li>CSRF攻击</li>
+<li>XSS攻击</li>
+<li>日志记录用户操作, 无论成功还是失败, 防御各种攻击.</li>
+</ol>
+<h1 id="性能问题">5.  性能问题</h1>
+<ol>
+<li>缓存时间过不宜过短, 防止接口频繁调用, 缓存频繁写入.</li>
+</ol>
+<h1 id="迭代开发">6.  迭代开发</h1>
+<p>迭代开发BOSS系统, 在统一的系统页面可以管理所有子系统, 不用在不同的系统中跳转, 方便运维.</p>
+<h1 id="resource">7.  Resource</h1>
+<ul>
+<li>sso工具比较<br>
+<a href="http://netsecurity.51cto.com/art/201507/482310.htm" target="_blank" rel="noopener">http://netsecurity.51cto.com/art/201507/482310.htm</a></li>
+<li>
+
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/tool/2040e57b/" rel="prev" title="atom">
+      <i class="fa fa-chevron-left"></i> atom
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/tool/84d74ef6/" rel="next" title="rap">
+      rap <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#应用场景"><span class="nav-number">1.</span> <span class="nav-text">1.  应用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#单点登录序列图"><span class="nav-number">2.</span> <span class="nav-text">2.  单点登录序列图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#缓存内容"><span class="nav-number">3.</span> <span class="nav-text">3.  缓存内容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安全问题"><span class="nav-number">4.</span> <span class="nav-text">4.  安全问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#性能问题"><span class="nav-number">5.</span> <span class="nav-text">5.  性能问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#迭代开发"><span class="nav-number">6.</span> <span class="nav-text">6.  迭代开发</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#resource"><span class="nav-number">7.</span> <span class="nav-text">7.  Resource</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

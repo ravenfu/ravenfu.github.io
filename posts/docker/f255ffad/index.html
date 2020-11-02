@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1.  安装 12345678910111213141516171819202122# 删除老版本sudo apt-get remove docker docker-engine docker.io# 安装sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-commoncurl -">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker">
+<meta property="og:url" content="https://ravenfu.github.io/posts/docker/f255ffad/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="1.  安装 12345678910111213141516171819202122# 删除老版本sudo apt-get remove docker docker-engine docker.io# 安装sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-commoncurl -">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-10-06T07:44:20.000Z">
+<meta property="article:modified_time" content="2020-09-11T07:49:38.750Z">
+<meta property="article:author" content="Raven">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/docker/f255ffad/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>docker | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/docker/f255ffad/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          docker
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-10-06 15:44:20" itemprop="dateCreated datePublished" datetime="2017-10-06T15:44:20+08:00">2017-10-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 15:49:38" itemprop="dateModified" datetime="2020-09-11T15:49:38+08:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="安装">1.  安装</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除老版本</span></span><br><span class="line">sudo apt-get remove docker docker-engine docker.io</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line">sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common</span><br><span class="line">curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -</span><br><span class="line">sudo add-apt-repository <span class="string">"deb [arch=amd64] https://download.docker.com/linux/debian <span class="variable">$(lsb_release -cs)</span> stable"</span></span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install docker-ce</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加docker组</span></span><br><span class="line"><span class="comment"># sudo groupadd docker</span></span><br><span class="line"><span class="comment"># sudo gpasswd -a $&#123;USER&#125; docker</span></span><br><span class="line"><span class="comment"># sudo systemctl restart docker</span></span><br><span class="line"><span class="comment"># 切换当前会话到新 group 或者重启 X 会话</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前用户所在的所有用户组</span></span><br><span class="line">groups</span><br><span class="line"><span class="comment"># 将用户添加到 docker 用户组</span></span><br><span class="line">sudo usermod -a -G docker &lt;username&gt;</span><br><span class="line"><span class="comment"># 刷新</span></span><br><span class="line">newgrp - docker</span><br></pre></td></tr></table></figure>
+<h1 id="镜像">2.  镜像</h1>
+<p>通过修改镜像源地址, 加快镜像下载速度.<br>
+镜像源配置文件是: <code>/etc/docker/daemon.json</code></p>
+<ol>
+<li>使用daoCloud的镜像加速器</li>
+</ol>
+<h5 id="修改方法">2.0.0.0.1.  修改方法</h5>
+<p>不同环境可查看 <a href="https://www.daocloud.io/mirror#accelerator-doc" target="_blank" rel="noopener">https://www.daocloud.io/mirror#accelerator-doc</a></p>
+<p>在linux下使用如下命令配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sSL https:&#x2F;&#x2F;get.daocloud.io&#x2F;daotools&#x2F;set_mirror.sh | sh -s http:&#x2F;&#x2F;85ad13ff.m.daocloud.io</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>阿里云镜像加速器</li>
+</ol>
+<p>注册 <code>https://cr.console.aliyun.com/</code><br>
+之后访问 <code>https://cr.console.aliyun.com/#/accelerator</code><br>
+获得专属加速器<br>
+/etc/docker/daemon.json</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;https:&#x2F;&#x2F;61mj61jz.mirror.aliyuncs.com&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+<h1 id="网络">3.  网络</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --net=bridge</span><br></pre></td></tr></table></figure>
+<h1 id="修改docker的默认镜像存储位置">4.  修改Docker的默认镜像存储位置</h1>
+<p>可能会需要镜像太多, 或者磁盘分配太小, 之后导致无法再下载镜像,或者容器无法启动.<br>
+我们可能需要将镜像存储位置移动到其他文件目录下.</p>
+<p>默认镜像存储位置是 <code>/var/lib/docker</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过该命令查看默认镜像存储位置</span></span><br><span class="line">docker info | grep <span class="string">'Docker Root Dir'</span></span><br></pre></td></tr></table></figure>
+<h2 id="方式-1-修改docker的默认镜像存储位置">4.1.  方式 1: 修改Docker的默认镜像存储位置</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 停止服务</span></span><br><span class="line">systemctl stop docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对之前的数据做个文件备份, 如果有把握可以跳过</span></span><br><span class="line">tar -zcC /var/lib/docker &gt;/mnt/var_lib_docker-backup-$(date + %s).tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 迁移整个/var/lib/docker目录到目的路径</span></span><br><span class="line">mv /var/lib/docker /home/raven/Package/docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立symlink软链接</span></span><br><span class="line">ln -s /data/tools/docke /var/lib/docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># 确认文件夹类型为symlink 类型</span></span><br><span class="line">ls -al /var/lib/docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启服务</span></span><br><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+<h2 id="方式-2-修改镜像和容器的默认存放路径">4.2.  方式 2:  修改镜像和容器的默认存放路径</h2>
+<p>在 <code>/etc/default/docker</code> 中修改</p>
+<blockquote>
+<p>DOCKER_OPTS=&quot;-g /home/raven/Package/docker&quot;</p>
+</blockquote>
+<p>之后重启服务</p>
+<p>或者 修改 <code>/etc/docker/daemon.json</code></p>
+<blockquote>
+<p>{“registry-mirrors”: [“http://***.***.com”],“graph”:&quot;/home/raven/Packages/docker&quot;}</p>
+</blockquote>
+<p>修改后立即生效</p>
+<h1 id="容器管理工具">5.  容器管理工具</h1>
+<p>以下 3 个工具都能通过文件配置管理与发布 Docker 容器.</p>
+<h2 id="docker-compose">5.1.  Docker Compose</h2>
+<p>Docker Compose 只能管理当前主机上的容器</p>
+<h2 id="docker-swarm">5.2.  Docker Swarm</h2>
+<p>Docker Swarm 能管理多主机上的容器, 是由 Docker 公司开发的</p>
+<h2 id="kubernates">5.3.  Kubernates</h2>
+<p>Kubernates 也能管理多主机上的容器, 是有谷歌开发的.<br>
+Kubernates 比 Docker Swarm 更主流有点, 目前很多大公司使用它作为默认容器管理工具.</p>
+<h1 id="problem">6.  Problem</h1>
+<h2 id="1-动态设置-容器最大内存">6.1.  1. 动态设置 容器最大内存</h2>
+<p>在部署docker应用,  应用编排时都需要指定一个内存的最大使用上限.<br>
+如果应用使用的内存超过了配额, 镜像会被kill掉.<br>
+所以java微服务应用, 有必要设置应用自己的最大内存.</p>
+<p>docker镜像服务的内存不能全部给 <em>-Xmx</em> , 因为JVM消耗的内存不仅仅是Heap.</p>
+<p>JVM = Heap + Method Area +Constant Pool + Thread Stack * num of thread .</p>
+<p>Xmx的值可设置为镜像上限减去150m或200m.<br>
+当然还需要考虑应用自身的特点, 比如class数目, 并发线程数等.</p>
+<p>通过 cgroups 动态获取容器资源配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># git memory limit size</span></span><br><span class="line">limit_in_bytes=$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes)</span><br><span class="line"></span><br><span class="line"><span class="comment"># If not default limit_in_bytes in cgroup</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$limit_in_bytes</span>"</span> -ne <span class="string">"9223372036854771712"</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    limit_in_megabytes=$(expr <span class="variable">$limit_in_bytes</span> \/ 1048576)</span><br><span class="line">    heap_size=$(expr <span class="variable">$limit_in_megabytes</span> - <span class="variable">$RESERVED_MEGABYTES</span>)</span><br><span class="line">    <span class="built_in">export</span> JAVA_OPTS=<span class="string">"-Xmx<span class="variable">$&#123;heap_size&#125;</span>m <span class="variable">$JAVA_OPTS</span>"</span></span><br><span class="line">    <span class="built_in">echo</span> JAVA_OPTS=<span class="variable">$JAVA_OPTS</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># start tomcat</span></span><br></pre></td></tr></table></figure>
+<h1 id="常见问题">7.  常见问题</h1>
+<h2 id="docker-杀死容器">7.1.  docker 杀死容器</h2>
+<p>解决办法, 调整容器分配的内存到 1280m , 调整jvm分配的内存, 大致参数如下:</p>
+<p>-Xms512m -Xmx512m -XX:ReservedCodeCacheSize=128m -XX:+UseCodeCacheFlushing -XX:MetaspaceSize=192m -XX:MaxMetaspaceSize=192m -XX:MaxDirectMemorySize=64m</p>
+<p>明确已知内存 512m + 128m + 192m + 64m 共 896m,</p>
+<p>另外线程预留 128m  (预留 200线程, 每线程 512k)</p>
+<p>剩余 256m 作为余量</p>
+<h1 id="resource">8.  Resource</h1>
+<ul>
+<li>
+<p>doc<br>
+<a href="https://docs.docker.com/engine/installation/linux/docker-ce/debian/#install-using-the-repository" target="_blank" rel="noopener">https://docs.docker.com/engine/installation/linux/docker-ce/debian/#install-using-the-repository</a><br>
+<a href="https://docs.docker.com/reference/" target="_blank" rel="noopener">https://docs.docker.com/reference/</a></p>
+</li>
+<li>
+<a href="https://yq.aliyun.com/articles/233839?spm=5176.10695662.1996646101.searchclickresult.7cb74579zzEffo" target="_blank" rel="noopener" title target>Docker 加速器</a>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/ilinuxer/p/6648681.html" target="_blank" rel="noopener">https://www.cnblogs.com/ilinuxer/p/6648681.html</a></p>
+</li>
+<li>
+<p><a href="https://github.com/maqian/toolbox" target="_blank" rel="noopener">https://github.com/maqian/toolbox</a></p>
+</li>
+<li>
+<a href="http://www.cnblogs.com/xuxinkun/p/5541894.html" target="_blank" rel="noopener" title target>Docker容器内存监控</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/tool/ab21860c/" rel="prev" title="Hexo">
+      <i class="fa fa-chevron-left"></i> Hexo
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/tool/3e01b4d/" rel="next" title="curl">
+      curl <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">1.  安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#镜像"><span class="nav-number">2.</span> <span class="nav-text">2.  镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#修改方法"><span class="nav-number">2.0.0.0.1.</span> <span class="nav-text">2.0.0.0.1.  修改方法</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网络"><span class="nav-number">3.</span> <span class="nav-text">3.  网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#修改docker的默认镜像存储位置"><span class="nav-number">4.</span> <span class="nav-text">4.  修改Docker的默认镜像存储位置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方式-1-修改docker的默认镜像存储位置"><span class="nav-number">4.1.</span> <span class="nav-text">4.1.  方式 1: 修改Docker的默认镜像存储位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方式-2-修改镜像和容器的默认存放路径"><span class="nav-number">4.2.</span> <span class="nav-text">4.2.  方式 2:  修改镜像和容器的默认存放路径</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#容器管理工具"><span class="nav-number">5.</span> <span class="nav-text">5.  容器管理工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose"><span class="nav-number">5.1.</span> <span class="nav-text">5.1.  Docker Compose</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-swarm"><span class="nav-number">5.2.</span> <span class="nav-text">5.2.  Docker Swarm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubernates"><span class="nav-number">5.3.</span> <span class="nav-text">5.3.  Kubernates</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#problem"><span class="nav-number">6.</span> <span class="nav-text">6.  Problem</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-动态设置-容器最大内存"><span class="nav-number">6.1.</span> <span class="nav-text">6.1.  1. 动态设置 容器最大内存</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">7.</span> <span class="nav-text">7.  常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-杀死容器"><span class="nav-number">7.1.</span> <span class="nav-text">7.1.  docker 杀死容器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#resource"><span class="nav-number">8.</span> <span class="nav-text">8.  Resource</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

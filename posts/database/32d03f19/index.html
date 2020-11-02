@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="使用以下命令可以查看MySQL支持的引擎 1show engine;  InnoDB  具有提交, 回滚和崩溃恢复能力的事务安全 (ACID兼容) 存储引擎. 基于聚簇索引建立, 聚簇索引对主键查询有很高的性能. 不过它的二级索引(secondary index, 非主键索引)中必须包含主键列, 所以如果主键列很大的话, 其他的所有索引都会很大. 因此表上的索引较多的话, 主键应当尽可能的小. 支">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 引擎">
+<meta property="og:url" content="https://ravenfu.github.io/posts/database/32d03f19/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="使用以下命令可以查看MySQL支持的引擎 1show engine;  InnoDB  具有提交, 回滚和崩溃恢复能力的事务安全 (ACID兼容) 存储引擎. 基于聚簇索引建立, 聚簇索引对主键查询有很高的性能. 不过它的二级索引(secondary index, 非主键索引)中必须包含主键列, 所以如果主键列很大的话, 其他的所有索引都会很大. 因此表上的索引较多的话, 主键应当尽可能的小. 支">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-01-18T08:27:27.000Z">
+<meta property="article:modified_time" content="2020-09-11T07:49:05.690Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/database/32d03f19/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL 引擎 | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/database/32d03f19/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL 引擎
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-18 16:27:27" itemprop="dateCreated datePublished" datetime="2019-01-18T16:27:27+08:00">2019-01-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 15:49:05" itemprop="dateModified" datetime="2020-09-11T15:49:05+08:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/database/" itemprop="url" rel="index"><span itemprop="name">database</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>使用以下命令可以查看MySQL支持的引擎</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">engine</span>;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>InnoDB</li>
+</ol>
+<p>具有提交, 回滚和崩溃恢复能力的事务安全 (ACID兼容) 存储引擎.<br>
+基于聚簇索引建立, 聚簇索引对主键查询有很高的性能.<br>
+不过它的二级索引(secondary index, 非主键索引)中必须包含主键列, 所以如果主键列很大的话, 其他的所有索引都会很大.<br>
+因此表上的索引较多的话, 主键应当尽可能的小.<br>
+支持事务和外键.行级锁.<br>
+适合在以下几种情况下使用:<br>
+1.更新和查询都相当的频繁, 多重并发<br>
+2.要求事务, 或者可靠性要求比较高<br>
+3.外键约束, MySQL支持外键的存储引擎只有InnoDB<br>
+一般来说, 如果需要事务支持, 并且有较高的并发读取频率, InnoDB是不错的选择.</p>
+<p>Percona 的 XtraDB 存储引擎是基于 InnoDB 引擎的一个改进版本.<br>
+它主要改进集中在性能, 可测量性和操作灵活行方面.</p>
+<ol start="2">
+<li>MyISAM</li>
+</ol>
+<p>提供高速存储和检索, 以及全文搜索能力.<br>
+不支持事务.表级锁.不能在表损坏后安全恢复数据.<br>
+适合只读数据, 或者表比较小, 可以忍受修复操作的情况.</p>
+<p>适合在以下几种情况下使用:<br>
+1.做很多count的计算<br>
+2.查询非常频繁</p>
+<ol start="3">
+<li>Memory (Heap)</li>
+</ol>
+<p>数据保存在内存中, 拥有极高的插入, 更新和查询效率.但是不稳定, 重启以后数据都会丢失.<br>
+不支持事务.支持表级锁, 因此并发写入的性能较低.<br>
+支持长度不变的数据类型, 不支持BLOB或TEXT长度可变的数据类型. VARCHAR是一种长度可变的类型, 但因为它在MySQL内部当做长度固定不变的CHAR类型, 所以可以使用.<br>
+每个表会生成一个.frm文件, 该文件只存储表的结构.<br>
+支持HASH索引和B-Tree索引, 擎默认使用HASH索引.<br>
+在内存中存放数据, 所以会造成内存的使用, 可以通过参数max_heap_table_size控制MEMORY表的大小.</p>
+<ol start="4">
+<li>Archive</li>
+</ol>
+<p>拥有很好的压缩机制, 它使用zlib压缩库, 在记录被请求时会实时压缩.<br>
+支持最基本的插入和查询两种功能.在MySQL 5.5开始支持索引.<br>
+不支持事务.支持行级锁和专用的缓存区, 所以可以实现高并发的插入.<br>
+适合存储大量日志, 历史数据.</p>
+<ol start="5">
+<li>Blackhole</li>
+</ol>
+<p>接受但不存储数据, 但是如果MySQL启用了二进制日志, SQL语句被写入日志 (并被复制到从服务器) .<br>
+用于做日志记录或同步归档的中继存储.但这种应用方式会碰到很多问题, 因此并不推荐.<br>
+支持事务, 而且支持mvcc的行级锁.</p>
+<ol start="6">
+<li>CSV</li>
+</ol>
+<p>每个表会生成一个.CSV文件, 将CSV类型的文件当做表进行处理.<br>
+把数据以逗号分隔的格式存储在文本文件中, 这种文件是一种普通文本文件, 每个数据行占用一个文本行.<br>
+不支持索引, 即使用该种类型的表没有主键列, 也不允许表中的字段为null.</p>
+<ol start="7">
+<li>NDB Cluster</li>
+</ol>
+<p>NDB 集群存储引擎<br>
+分布式, 自动分片, share-nothing, 容灾, 高可用.</p>
+<ol start="8">
+<li>Infobright</li>
+</ol>
+<p>面向列的存储引擎</p>
+<ol start="9">
+<li>Sphinx</li>
+</ol>
+<p>高效全文搜索引擎</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/database/a2aedf2f/" rel="prev" title="MySQL 性能优化">
+      <i class="fa fa-chevron-left"></i> MySQL 性能优化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/database/13ffbf52/" rel="next" title="mysql-lock">
+      mysql-lock <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="线程池">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThreadPoolExecutor">
+<meta property="og:url" content="https://ravenfu.github.io/posts/concurrency/9545bc72/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="线程池">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-21T11:42:25.000Z">
+<meta property="article:modified_time" content="2020-09-11T07:49:21.241Z">
+<meta property="article:author" content="Raven">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/concurrency/9545bc72/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ThreadPoolExecutor | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/concurrency/9545bc72/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ThreadPoolExecutor
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-21 19:42:25" itemprop="dateCreated datePublished" datetime="2020-07-21T19:42:25+08:00">2020-07-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 15:49:21" itemprop="dateModified" datetime="2020-09-11T15:49:21+08:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/concurrency/" itemprop="url" rel="index"><span itemprop="name">concurrency</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">线程池</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="参数">1.  参数</h1>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ThreadPoolExecutor(<span class="keyword">int</span> corePoolSize,</span><br><span class="line">                <span class="keyword">int</span> maximumPoolSize,</span><br><span class="line">                <span class="keyword">long</span> keepAliveTime,</span><br><span class="line">                TimeUnit unit,</span><br><span class="line">                BlockingQueue&lt;Runnable&gt; workQueue,</span><br><span class="line">                ThreadFactory threadFactory,</span><br><span class="line">                RejectedExecutionHandler handler)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>corePoolSize<br>
+核心线程数, 如果运行的线程小于 corePoolSize, 且没有空闲线程, 则创建新线程来执行任务.</li>
+<li>maximumPoolSize<br>
+可允许创建的线程数.<br>
+当队列满时, 如果 corePoolSize 小于 maximumPoolSize, 则开始创建小于 maximumPoolSize 的线程帮助处理任务.</li>
+<li>keepAliveTime &amp; unit<br>
+当线程池中的线程大于 corePoolSize时, 多余的空闲线程的最大存活时长和单位.</li>
+<li>workQueue<br>
+保存任务的阻塞队列.</li>
+<li>threadFactory<br>
+使用 ThreadFactory 创建新线程.</li>
+<li>handler<br>
+拒绝任务的策略:
+<ul>
+<li>AbortPolicy: 抛出异常, 默认策略.</li>
+<li>CallerRunsPolicy: 在调用线程执行.</li>
+<li>DiscardPolicy: 抛弃新提交的任务.</li>
+<li>DiscardOldestPolicy: 抛弃最老的任务.</li>
+</ul>
+</li>
+</ul>
+<h1 id="api">2.  API</h1>
+<ul>
+<li>submit &amp; execute<br>
+submit 和 execute 都用于提交任务, 区别在于 execute 能打印出任务在执行过程中的异常.</li>
+</ul>
+<h1 id="executor">3.  Executor</h1>
+<p>在 Executors 中包含了常用的 ThreadPoolExecutor 创建方式.</p>
+<ul>
+<li>newFixedThreadPool(int nThreads)<br>
+返回一个固定线程数的线程池.<br>
+如果没有可用核心线程, 则放入队列中, 等待核心线程可用时处理.<br>
+使用 LinkedBlockingQueue 队列.</li>
+<li>newCachedThreadPool()<br>
+返回根据任务情况自动调整线程数的线程池.<br>
+如果有空闲线程, 则优先复用空闲线程; 如果没有, 则创建新先处理.<br>
+使用 SynchronousQueue 队列.</li>
+<li>newSingleThreadExecutor()<br>
+返回固定只有一个线程的线程池.<br>
+使用 LinkedBlockingQueue 队列.</li>
+<li>newScheduledThreadPool()<br>
+返回计划任务的自动调整线程数的线程池.<br>
+使用 DelayedWorkQueue 队列.</li>
+<li>newSingleThreadScheduledExecutor()<br>
+返回计划任务的单个线程的线程池.<br>
+使用 DelayedWorkQueue 队列.</li>
+</ul>
+
+<h2 id="scheduledexecutorservice">3.1.  ScheduledExecutorService</h2>
+<p>ScheduledExecutorService 是 newScheduledThreadPool 或 newSingleThreadScheduledExecutor 返回的对象.<br>
+它的 API:</p>
+<ul>
+<li>schedule<br>
+会在给定时间堆任务进行一次调度.</li>
+<li>scheduleAtFixedRate<br>
+会以上一个任务的开始时间为起点, 周期性的调度, 调度频率是一致的.</li>
+<li>scheduleWithFixedDelay<br>
+会以上一个任务的结束时间为起点, 周期性的调度</li>
+</ul>
+<h2 id="blockingqueue-阻塞队列">3.2.  BlockingQueue 阻塞队列</h2>
+<ul>
+<li>直接提交队列<br>
+该功能由 SynchronousQueue 对象提供. SynchronousQueue 没有容量, 每一个插入操作都要等待一个相应的删除操作, 反之, 每一个删除操作都要等待一个相应的插入操作.<br>
+如果使用 SynchronousQueue, 提交的任务不会被真实的保存, 而总是将新任务提交给线程执行, 如果没有空闲线程, 则创建新的线程, 如果线程数量达到上限, 则执行拒绝策略.</li>
+<li>有界队列<br>
+有界的任务队列可以使用 ArrayBlockingQueue 实现.<br>
+当使用有界的任务队列时, 若有新的任务需要执行, 如果线程池的实际线程数小于 corePoolSize, 则会优先创建新的线程; 若大于 corePoolSize, 则会将新任务加入等待队列. 若等待队列已满, 无法加入, 则在总线程数不大于 maximumPoolSize 的前提下, 创建新的进程执行任务; 若大于maximumPoolSize, 则执行拒绝策略. 可见, 有界队列仅当在任务队列装满时, 才可能将线程数提升到 corePoolSize 以上, 换言之, 除非系统非常繁忙, 否则要确保核心线程数维持在 corePoolSize.</li>
+<li>无界队列<br>
+有界的任务队列可以使用 LinkedBlockingQueue 实现.<br>
+与有界队列相比, 除非系统资源耗尽, 否则无界的任务队列不存在任务入队失败的情况. 当有新的任务到来, 系统的线程数小于 corePoolSize时, 线程池会生成新的线程执行任务, 但当系统的线程数达到corePoolSize 时, 线程就不会继续增加了. 若后续任由新的任务加入, 而又没有空闲的线程资源, 则任务直接进入队列等待. 若任务创建和处理的速度差异很大, 无界队列会保持快速增长, 直到耗尽系统内存.</li>
+<li>优先任务队列<br>
+优先任务队列是带有执行优先级的任务队列. 它通过PriorityBlockingQueue 类实现, 可以控制任务的执行先后顺序. 他是一个特殊的无界队列. 无论是有界队列 ArrayBlockingQueue 类, 还是未指定大小的无界队列 LinkedBlockingQueue 类都是按照先进先出算法处理任务的. 而 PriorityBlockingQueue 类则可以根据任务自身的优先级顺序先后执行, 在确保系统性能的同时, 也能有很好的质量保证 (总是确保高优先级的任务先执行) .</li>
+</ul>
+<h2 id="自定义线程池线程数量设计">3.3.  自定义线程池线程数量设计</h2>
+<p>假设:<br>
+Ncpu = CPU 的数量<br>
+Ucpu = CPU 的使用率<br>
+W/C = 等待时间与计算时间的比率 = 阻塞系数</p>
+<p>为了保证达到期望的使用率, 最优的线程池大小为:</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>N</mi><mi>t</mi><mi>h</mi><mi>r</mi><mi>e</mi><mi>a</mi><mi>d</mi><mi>s</mi><mo>=</mo><mi>N</mi><mi>c</mi><mi>p</mi><mi>u</mi><mo>×</mo><mi>U</mi><mi>c</mi><mi>p</mi><mi>u</mi><mo>×</mo><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mi>W</mi><mi mathvariant="normal">/</mi><mi>C</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Nthreads = Ncpu \times Ucpu \times (1 + W/C)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">a</span><span class="mord mathdefault">d</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">c</span><span class="mord mathdefault">p</span><span class="mord mathdefault">u</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault">c</span><span class="mord mathdefault">p</span><span class="mord mathdefault">u</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mclose">)</span></span></span></span></p>
+<p>一般地, CPU 密集型的应用, 为了防止 CPU 上下文切换而增加额外的开销, 线程数量大致为:</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>N</mi><mi>t</mi><mi>h</mi><mi>r</mi><mi>e</mi><mi>a</mi><mi>d</mi><mi>s</mi><mo>=</mo><mi>N</mi><mi>c</mi><mi>p</mi><mi>u</mi><mo>±</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">Nthreads = Ncpu \pm 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">a</span><span class="mord mathdefault">d</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">c</span><span class="mord mathdefault">p</span><span class="mord mathdefault">u</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">±</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></p>
+<p>而, IO 密集型的应用, 为了充分利用等待时间, 线程数量大致为:</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>N</mi><mi>t</mi><mi>h</mi><mi>r</mi><mi>e</mi><mi>a</mi><mi>d</mi><mi>s</mi><mo>=</mo><mi>N</mi><mi>c</mi><mi>p</mi><mi>u</mi><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>W</mi><mi mathvariant="normal">/</mi><mi>C</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Nthreads = Ncpu / (1 - W/C)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">a</span><span class="mord mathdefault">d</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">c</span><span class="mord mathdefault">p</span><span class="mord mathdefault">u</span><span class="mord">/</span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mclose">)</span></span></span></span></p>
+<p>而阻塞系数范围在 0.8 ~ 0.9 之间.</p>
+<p>假设是一台 4 核 CPU 的服务器, CPU 密集型服务, 线程池的线程数约 3 ~ 5; IO 密集型的服务, 线程池的线程数约 20 ~ 40.</p>
+<h1 id="future">4.  Future</h1>
+<p>通过 ThreadPoolExecutor.submit(Callable task) 方法,提交任务给线程池, 将返回 Future 对象, 能够异步获取处理结果.</p>
+<p>submit 方法会将 Callable 类型的 task 封装成 FutureTask 类型, FutureTask 是 Runnable, Future 的实现类型的.</p>
+
+<p>FutureTask 会持有以下属性:</p>
+<ul>
+<li>state: 处理状态</li>
+<li>callable: 需要运行的任务</li>
+<li>outcome: 结果</li>
+<li>runner: 处理的线程</li>
+<li>waiters: 等待线程链表</li>
+</ul>
+<p>ThreadPoolExecutor.submit 方法提交任务后, 交给线程池里的线程执行, 之后调用 Future.get 方法获取结果.</p>
+<p>Future.get 方法, 也就是调用 FutureTask.get 方法.<br>
+该方法会循环判断判断任务的处理状态.<br>
+如果任务正在执行, 会通过 Thread.yield 方法让出 CPU 资源, 等待下次循环再效验.<br>
+如果任务执行完成, 则将 outcome 返回.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/concurrency/151f44ae/" rel="prev" title="ThreadLocal">
+      <i class="fa fa-chevron-left"></i> ThreadLocal
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/concurrency/227b7dd1/" rel="next" title="CompletableFuture">
+      CompletableFuture <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参数"><span class="nav-number">1.</span> <span class="nav-text">1.  参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#api"><span class="nav-number">2.</span> <span class="nav-text">2.  API</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#executor"><span class="nav-number">3.</span> <span class="nav-text">3.  Executor</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#scheduledexecutorservice"><span class="nav-number">3.1.</span> <span class="nav-text">3.1.  ScheduledExecutorService</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#blockingqueue-阻塞队列"><span class="nav-number">3.2.</span> <span class="nav-text">3.2.  BlockingQueue 阻塞队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义线程池线程数量设计"><span class="nav-number">3.3.</span> <span class="nav-text">3.3.  自定义线程池线程数量设计</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#future"><span class="nav-number">4.</span> <span class="nav-text">4.  Future</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+  
+
+</body>
+</html>

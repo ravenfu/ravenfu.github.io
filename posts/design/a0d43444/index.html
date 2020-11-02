@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="设计原则">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计原则">
+<meta property="og:url" content="https://ravenfu.github.io/posts/design/a0d43444/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="设计原则">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-06T02:18:51.000Z">
+<meta property="article:modified_time" content="2020-09-11T07:49:10.253Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="design priciple">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/design/a0d43444/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>设计原则 | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/design/a0d43444/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          设计原则
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-06 10:18:51" itemprop="dateCreated datePublished" datetime="2019-07-06T10:18:51+08:00">2019-07-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 15:49:10" itemprop="dateModified" datetime="2020-09-11T15:49:10+08:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/design/" itemprop="url" rel="index"><span itemprop="name">design</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">设计原则</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="面向对象设计原则">1.  面向对象设计原则</h1>
+<p>对于面向对象软件系统设计而言, 在支持 <code>可维护性</code> 的同时, 提高系统的 <code>可复用性</code> 是一个至关重要的问题.<br>
+常见的面向对象设计原则有以下 7 种, 遵循这些设计原则可以有效的提高系统的<code>可维护性</code> 及 <code>可复用性</code>.</p>
+<h2 id="开闭原则">1.1.  开闭原则</h2>
+<p>Open-Closed Principle</p>
+<p>软件实体应对扩展开放, 对修改关闭.</p>
+<p>换言之, 软件实体应尽量在不修改原有代码的情况下进行扩展. 此处软件实体可以指一个软件模块, 一个由多个类组成的局部结构或一个独立的类.</p>
+<p>应用开闭原则可扩展已有的软件系统, 并为之提供新的行为, 以满足对软件的新需求, 使变化中的软件系统具有一定的 <code>适应性</code> 和 <code>灵活性</code>.<br>
+对于已有的软件模块, 特别是最重要的抽象层模块不能再修改, 这就使变化中的软件系统具有一定的 <code>稳定性</code> 和 <code>延续性</code>, 这样的系统同时满足了 <code>可复用性</code> 和 <code>可扩展性</code>.</p>
+<p><strong>实现开闭原则的关键就是抽象化, 并且从抽象化导出具体化实现. 在面向对象设计中, 开闭原则一并通过在原有模块中添加抽象层 (如接口或抽象类等) 来实现, 它也是其他面向对象设计原则的基础.</strong></p>
+<p><strong>开闭原则是面向对象设计的目标.</strong></p>
+<h2 id="里氏替换原则">1.2.  里氏替换原则</h2>
+<p>Liskov Substitution Principle</p>
+<p>所有引用基类的地方能够透明地使用其子类对象.</p>
+<p>其严格描述: 如果对每一个类型为 T1 的对象 O1, 都有类型为 T2 的对象 O2, 使得以 T1 定义的所有程序 P 在所有的对象 O1 都代表为 O2 时, 程序 P 的行为没有变化, 那么类型 T2 是类型 T1 的子类型.<br>
+换言之, 一个软件实体如果使用的是一个基类对象的话, 那么一定适用于其子类型对象, 而且觉察不出基类对象和子类对象的区别, 即把基类都替换成它的子类, 程序不会出错. 反过来则不一定成立, 如果一个软件实体使用的是一个子类对象的话, 那么它不一定适用于基类对象.</p>
+<p>在运用里氏替换原则时, 尽量将一些需要扩展的类或者存在变化的类设计为抽象类或者接口, 并将其作为基类, <strong>在程序中尽量针对抽象编程</strong>.<br>
+由于子类继承基类并覆盖基类的方法, 在程序运行时, 子类对象可以替换基类对象, 如果需要对类的行为进行修改, 可以通过扩展基类, 或增加新的子类, 而无需修改使用该基类对象的代码.</p>
+<p><strong>为了确保该原则的应用, 一个具体类应当只实现接口和抽象类中声明过的方法, 而不要给出多余的方法, 否则将无法调用到子类中增加的新方法.</strong></p>
+<h2 id="依赖倒转原则">1.3.  依赖倒转原则</h2>
+<p>Dependence Inversion Principle</p>
+<p>抽象不应该依赖于细节, 细节应该依赖于抽象.</p>
+<p>换言之, 要针对抽象编程, 而不是针对实现编程. 在程序代码中, 传递参数时或在关联关系中, 尽量引用层次高的抽象层类, 即使用接口和抽象类进行变量类型声明, 参数类型声明, 方法返回类型声明, 以及数据类型的转换等, 而不是使用具体类来做这类事情.<br>
+使用依赖倒转原则, 由类图可以看到一个向上依赖的倒置结构, 故以此命名.</p>
+<p>在引入抽象层后, 系统将具有极好的灵活性, 在程序中尽量使用抽象层进行编程, 而将具体一来作为配置. 这样一来, 如果系统行为需要发生变化, 只需对抽象层进行扩展, 并修改相关配置, 而尽可能的减少修改代码, 甚至不修改代码的情况下改变系统的功能.</p>
+<p><strong>依赖倒转原则是以开闭原则为目标, 以里氏替换原则作为基础, 更深层次的应用, 是面向对象设计的主要机制.</strong></p>
+<h2 id="单一职责原则">1.4.  单一职责原则</h2>
+<p>Single Responsibility Principle</p>
+<p>一个类只负责一个功能领域中的相应职责.<br>
+对于一个类而言, 应该只有一个引起它变化的原因.</p>
+<p>在一个软件系统中, 一个类 (或者大到模块, 小到方法) 承担的职责越多, 它被复用的可能性就越小.<br>
+而且一个类承担的职责过多, 就相当于将这些职责耦合在一起, 当其中一个职责变化时, 可能影响其他职责的运作.<br>
+因此要将这些职责进行分离, 将不同的职责封装在不同的类中, 即将不同的变化原因封装在不同的类中, 如果多个职责总是同时发生改变则可将它们封装在同一个类中.</p>
+<p><strong>单一职责原则是实现 <code>高内聚</code>, <code>低耦合</code> 的指导方针.</strong></p>
+<h2 id="接口隔离原则">1.5.  接口隔离原则</h2>
+<p>Interface Segregation Principle</p>
+<p>使用多个专门的接口, 而不使用单一的总接口.</p>
+<p>这里的接口往往有 2 种含义, 这 2 种不同的含义, 在 ISP 中的表达方式以及含义都有所不同:</p>
+<ol>
+<li>是指一个类型所具有的方法特征的集合, 仅仅是一种逻辑上的的抽象.</li>
+</ol>
+<p>此时可以把接口理解成为角色, 一个接口就只代表一种角色, 此时这个原则可以叫做 <code>角色隔离原则</code>.</p>
+<ol start="2">
+<li>是指某种语言具体的接口定义, 有严格的定义和结构, 比如 Java 语言里的 Interface.</li>
+</ol>
+<p>接口仅仅提供客户端需要的行为, 客户端不需要的行为则隐藏起来, 应当为客户端提供尽可能小的单独的接口, 而不要提供大的总接口.<br>
+为了使接口的职责单一, 需要将大接口中的方法根据职责不同拆分成不同的小接口, 以降低耦合度, 提高灵活性.</p>
+<h2 id="迪米特法则">1.6.  迪米特法则</h2>
+<p>Law of Demeter<br>
+也称最少知识原则, Least Knowledge Principle</p>
+<p>一个软件实体应当尽可能少的与其他实体发生相互作用.</p>
+<p>这样在修改时, 就会尽量少地影响其他的模块, 扩展相对容易. 这是对软件实体之间通信的限制, 它要求限制软件实体之间通信的宽度和深度.</p>
+<p>迪米特法则可分狭义法则和广义法则.<br>
+在狭义的迪米特法则中, 如果两个类之间不必彼此直接通信, 那么这两个类就不应当发生直接的相互作用, 如果其中的一个类需要调用另一个类的某一个方法的话, 可以通过第三方转发这个调用. 狭义的迪米特法则可以降低类之间的耦合度, 但是会在系统中增加大量的小方法并散落在系统的各个角落, 它可以使一个系统的局部设计简化, 因为每一个局部都不会和远距离的对象有直接的关联, 但是也会造成系统的不同模块之间的通信效率降低, 使得系统的不同模块之间不容易协调.<br>
+广义的迪米特法则就是指对象之间的信息流量, 流向以及信息的影响的控制, 主要是对信息隐藏的控制. 信息的隐藏可以使各个子系统之间解耦, 从而使它们可以被独立地开发, 优化, 使用和修改, 同时可以促进软件的复用, 由于每一个模块都不依赖于其它模块而存在, 因此每一个模块都可以被独立地在其它地方被使用. 一个系统的规模越大, 信息隐藏的重要性就越明显.</p>
+<p>迪米特法则主要用于控制信息的过载. 在迪米特法则运用时到系统设计时, 需要注意以下的几点:<br>
+在类的划分上, 应当尽量创建松耦合的类;<br>
+在类的结构上, 每一个类应当尽量降低其成员变量和成员函数的访问权限;<br>
+在类的设计上, 只要有可能, 一个类应当设计成不变类;<br>
+在对其他类的引用上, 一个对象对其他对象的引用应当降到最低.</p>
+<h2 id="合成复用原则">1.7.  合成复用原则</h2>
+<p>Composite Reuse Principle<br>
+也称组合/聚合复用原则, Composition / Aggregate Reuse Principle</p>
+<p>复用时, 尽量使用对象组合, 而不使用继承来达到复用的目的.</p>
+<p>在一个新的对象里通过关联关系 (包括组合和聚合关系) 来使用一些已有的对象, 使之成为新对象的一部分; 新对象通过委派调用已有对象的方法达到复用已有功能的目的.</p>
+<p>在面向对象设计中, 可以通过 2 种基本方法在不同的环境中复用已有的设计和实现, 即通过组合/聚合关系或通过继承. 但首先应该考虑使用组合/聚合, 组合/聚合可以使系统更加灵活, 类之间的耦合度更低; 其次才考虑使用继承, 使用继承时应严格遵循里氏替换原则. 有效的使用继承会有助于对问题的理解, 降低复杂度, 而滥用继承反而会增加系统构建和维护的难度以及系统的复杂度.</p>
+<p>通过继承来进行复用的主要问题在于继承复用会破坏系统的封装性, 因为继承会将基类的实现细节暴露给子类.<br>
+由于基类的内部细节对于子类来说是可见的, 所以这种复用有身为 <strong>白箱</strong> 复用.<br>
+如果基类发生改变, 那么子类的实现也不得不发生改变; 从基类继承而来的实现是静态的, 不可能在运行时发生改变, 没有足够的灵活性; 而且继承只能在有限的环境中使用, 如类未声明为不能被继承.</p>
+<p>由于组合或聚合关系可以将已有的对象 (也称成员对象) 纳入到新对象中, 使之成为新对象的一部分, 因此新对象可以调用已有对象的功能, 这样做可以使得成员对象的内部实现细节对新对象是不可见的, 所以这种复用又称 <strong>黑箱</strong> 复用.<br>
+相对继承而言, 其耦合度相对较低; 成员对象的变化对新对象的影响不大, 可以在新对象中根据实际需要有选择性地调用成员对象的操作; 合成复用可以在运行时动态地进行, 新对象可以动态的引用于成员对象类型相同的其他对象.</p>
+<h1 id="其他设计原则">2.  其他设计原则</h1>
+<h2 id="solid">2.1.  SOLID</h2>
+<p>SOLID 是以上其中 5 种设计原则的单词缩写, 比较好记.</p>
+<ul>
+<li>S 单一职责原则 SRP</li>
+<li>O 开闭原则 OCP</li>
+<li>L 里氏替换原则 LSP</li>
+<li>I 接口分离原则 ISP</li>
+<li>D 依赖倒转原则 DIP</li>
+</ul>
+<h2 id="dry">2.2.  DRY</h2>
+<p>Don’t Repeat Yourself<br>
+每一个知识或逻辑必须在一个系统中有一个单一的, 明确的表示.</p>
+<h2 id="kiss">2.3.  KISS</h2>
+<p>Keep It Simple, Stupid<br>
+每个方法应该只解决一个小问题, 而不是实现很复杂的功能. 如果你在方法中有很多条件, 把它们分解成更小的单独的方法. 它不仅更易于阅读和维护, 而且可以更快地发现bug.</p>
+<h2 id="yagni">2.4.  YAGNI</h2>
+<p>You Ain’t Gonna Need It<br>
+只需要将应用程序必需的功能包含进来, 而不要试图添加任何其他你认为可能需要的功能.</p>
+<p>当你准备列出一个项目清单时, 试着考虑以下问题:</p>
+<ul>
+<li>通过降低抽象的层级, 来实现低复杂度</li>
+<li>根据特性将功能独立出来</li>
+<li>适度接受非功能性需求</li>
+<li>识别耗时的任务, 并摆脱它们</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/design-priciple/" rel="tag"># design priciple</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/design/6078bae8/" rel="prev" title="设计相关目录">
+      <i class="fa fa-chevron-left"></i> 设计相关目录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/uncategorized/9e83486d/" rel="next" title="ab">
+      ab <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#面向对象设计原则"><span class="nav-number">1.</span> <span class="nav-text">1.  面向对象设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#开闭原则"><span class="nav-number">1.1.</span> <span class="nav-text">1.1.  开闭原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#里氏替换原则"><span class="nav-number">1.2.</span> <span class="nav-text">1.2.  里氏替换原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#依赖倒转原则"><span class="nav-number">1.3.</span> <span class="nav-text">1.3.  依赖倒转原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单一职责原则"><span class="nav-number">1.4.</span> <span class="nav-text">1.4.  单一职责原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接口隔离原则"><span class="nav-number">1.5.</span> <span class="nav-text">1.5.  接口隔离原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特法则"><span class="nav-number">1.6.</span> <span class="nav-text">1.6.  迪米特法则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#合成复用原则"><span class="nav-number">1.7.</span> <span class="nav-text">1.7.  合成复用原则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他设计原则"><span class="nav-number">2.</span> <span class="nav-text">2.  其他设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#solid"><span class="nav-number">2.1.</span> <span class="nav-text">2.1.  SOLID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dry"><span class="nav-number">2.2.</span> <span class="nav-text">2.2.  DRY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kiss"><span class="nav-number">2.3.</span> <span class="nav-text">2.3.  KISS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yagni"><span class="nav-number">2.4.</span> <span class="nav-text">2.4.  YAGNI</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

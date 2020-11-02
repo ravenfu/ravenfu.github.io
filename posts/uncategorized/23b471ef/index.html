@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1.  网游加速器和换ip工具的区别 网游加速器是针对游戏ip进行加速, 从而达到降低游戏延迟的效果. 主要是针对个人用户快速, 安全连接网游服务器的一种服务. 它利用IDC资源, 采用数据转发的技术为个人用户提供快速, 优质网游加速服务. 原理是在全国各大网络节点均架设服务器, 让全国各地的玩家均可选择最优的节点从而享受完美的网游速度. 无论是从联通到电信, 从电信到联通, 还是从教育网到联通与">
+<meta property="og:type" content="article">
+<meta property="og:title" content="crawler&#x2F;代理">
+<meta property="og:url" content="https://ravenfu.github.io/posts/uncategorized/23b471ef/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="1.  网游加速器和换ip工具的区别 网游加速器是针对游戏ip进行加速, 从而达到降低游戏延迟的效果. 主要是针对个人用户快速, 安全连接网游服务器的一种服务. 它利用IDC资源, 采用数据转发的技术为个人用户提供快速, 优质网游加速服务. 原理是在全国各大网络节点均架设服务器, 让全国各地的玩家均可选择最优的节点从而享受完美的网游速度. 无论是从联通到电信, 从电信到联通, 还是从教育网到联通与">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="1970-01-01T00:00:00.000Z">
+<meta property="article:modified_time" content="2020-09-11T07:49:04.112Z">
+<meta property="article:author" content="Raven">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/uncategorized/23b471ef/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>crawler/代理 | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/uncategorized/23b471ef/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          crawler/代理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：1970-01-01 08:00:00" itemprop="dateCreated datePublished" datetime="1970-01-01T08:00:00+08:00">1970-01-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 15:49:04" itemprop="dateModified" datetime="2020-09-11T15:49:04+08:00">2020-09-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="网游加速器和换ip工具的区别">1.  网游加速器和换ip工具的区别</h1>
+<p>网游加速器是针对游戏ip进行加速, 从而达到降低游戏延迟的效果.</p>
+<p>主要是针对个人用户快速, 安全连接网游服务器的一种服务.<br>
+它利用IDC资源, 采用数据转发的技术为个人用户提供快速, 优质网游加速服务.</p>
+<p>原理是在全国各大网络节点均架设服务器, 让全国各地的玩家均可选择最优的节点从而享受完美的网游速度.<br>
+无论是从联通到电信, 从电信到联通, 还是从教育网到联通与电信, 都可以完美解决跨网所造成的网络屏障, 从而实现电信-联通-教育网, 畅通无阻.</p>
+<p>换ip工具是指虚拟专用网络, 是通过第三方网络协议传输数据的一种加密工具.<br>
+换ip工具可以实现不同网络的组件和资源之间的相互连接.<br>
+具体实现是采用隧道技术, 将数据封装在隧道中进行传输.<br>
+而隧道协议又可分为第二层隧道协议pptp, L2F, l2tp和第三隧道协GRE, lpsec.<br>
+区别在于用户的数据包是被封装在哪种数据包中在隧道中传输的.</p>
+<p>那么这两者到底有和区别呢？接下来就为大家简单介绍下换ip工具和网游加速器的不同之处.</p>
+<p>换ip工具是改变你本机的IP, 通过国内专用路线连接你所选IP所在地, 在进行直连.<br>
+而网游加速器是不改变你的IP地址 通过加速器优化通道转发数据连接游戏服务器.<br>
+网游加速器是优化游戏网络的, 降ping和减少丢包的, 一般都不允许你使用过度下载, 不给更换ip功能.<br>
+而换ip工具主要是更换ip, 如果你选择更换服务器地区的ip, 也可以降低延时, 达到加速效果.</p>
+<p>PPTP, 即点对点协议, 该协议是在PPP协议的基础上开发的一种新的增强型安全协议, 支持多协议虚拟专用网 (换ip软件) , 可以通过密码身份验证协议, 可扩展身份验证协议(EAP)等方法增强安全性.<br>
+可以使远程用户通过拨入ISP, 通过直接连接Internet或其他网络安全地访问企业网.</p>
+<h1 id="pptp和l2tp的区别">2.  PPTP和L2TP的区别</h1>
+<p>L2TP是国际标准隧道协议, 它结合了PPtp协议以及第二层转发L2F协议的优点, 能以隧道方式使PPP包通过各种网络协议, 包括ATM, SONET和帧中继.<br>
+但是L2TP没有任何加密措施, 更多是和IPSec协议结合使用, 提供隧道验证.</p>
+<p>主要区别:</p>
+<p>1: PPTP要求互联网络为IP网络.<br>
+L2TP只要求隧道媒介提供面向数据包的点对点的连接.<br>
+L2TP可以在IP (使用UDP) , 桢中继永久虚拟电路 (PVCs) , X.25虚拟电路 (VCs) 或ATM VCs网络上使用.</p>
+<p>2: PPTP只能在两端点间建立单一隧道.<br>
+L2TP支持在两端点间使用多隧道.<br>
+使用L2TP, 用户可以针对不同的服务质量创建不同的隧道.</p>
+<p>3: L2TP可以提供包头压缩.<br>
+当压缩包头时, 系统开销 (overhead) 占用4个字节, 而PPTP协议下要占用6个字节.</p>
+<p>4: L2TP可以提供隧道验证, 而PPTP不支持隧道验证.<br>
+但当L2TP或PPTP与IPSEC共同使用时, 可由IPSEC提供隧道验证, 不需在第2层协议上验证隧道.</p>
+<h1 id="ip地址如何分类">3.  IP地址如何分类</h1>
+<p>在国际互联网上有成千上万台电脑主机, 人们为了区分这些主机, 就给连接到Internet主机都分配了一个专门的 <em>地址</em>作为标识, 也就是ip地址.</p>
+<p>IP地址是IP协议提供的一种统一的地址格式, 它为互联网上的每一个网络和每一台主机分配一个逻辑地址, 以此来屏蔽物理地址的差异.<br>
+就和在中国每个人的身份证是唯一的一样, 一个IP地址在整个因特网范围内也是唯一的.<br>
+ip地址总共分为5类, A, B, C, D, E, 其中A类分配给政府机关使用, B类地址给大中型企业使用, C类地址给个人使用.<br>
+我们今天主要来说明下这3类地址.</p>
+<p>A类地址:范围从0-127, 0是保留的并且表示所有IP地址, 而127也是保留的地址, 并且是用于测试环回用的.<br>
+因此A类地址的范围其实是从1-126之间.<br>
+如: 10.0.0.1,  第- -段号码为网络号码, 剩下的三段号码为本地计算机的号码.<br>
+转换为2进制来说, -一个A类P地址由1字节的网络IP地址和3字节主机地址组成, 网络IP地址的最高位必须是 <em>0</em>,   地址范围从0.0.0.1到126.0.0.0.<br>
+可用的A类网络有126个, 每个网络能容纳1亿多个主机(2的24次方的主机数目).</p>
+<p>B类地址:范围从128-191, 如172.168.1.1,第一和第二段号码为网络号码, 剩下的2段号码为本地计算机的号码.<br>
+转换为2进制来说, 一个B类IP地址由2个字节的网络IP地址和2个字节的主机地址组成, 网络IP地址的最高位必须是 <em>10</em>, IP地址范围从128.0.0.0到191.255.255.255.<br>
+可用的B类网络有16382个, 每个网络能容纳6万多个主机.</p>
+<p>C类地址:范围从192-223, 如192.168.1.1, 第一, 第二, 第三段号码为网络号码, 剩下的最后一-段号码为本地计算机的号码.<br>
+转换为2进制来说, - -个C 类IP地址由3字节的网络IP地址和1字节的主机地址组成, 网络IP地址的最高位必须是 <em>110</em>.<br>
+范围从192.0.0.0到223.255.255.255.<br>
+C类网络可达209万余个, 每个网络能容纳254个主机.</p>
+<h1 id="改ip软件的作用">4.  改ip软件的作用</h1>
+<p>在如今的互联网时代, 我们无论是生活还是工作都离不开网络, 而用来连接互联网的计算机都会有一个ip地址, ip地址的作用是用来确定计算机的位置同事也是为了标识计算机, 毕竟每天都会有成千上万台的电脑主机连接, 总要区分开来.</p>
+<p>每一台连接了英特网的电脑都有一个唯一的ip地址就像我们每一个人的身份证一样, 那么这个ip地址能不能更改呢, 答案是可以的.<br>
+就是使用改ip软件.<br>
+, 很多人可能都听说过, 但是不太了解改ip软件的具体用处, 现在就给大家普及一下改ip软件的作用.</p>
+<p>1用于网络加速, 通过改ip软件改善与目标服务器之间的连接速度, 举个最简单的列子, 现在许多的网络游戏都有电信大区和网通大区, 在家中用的是电信宽带连接的是电信服务器大区, 而假如去学校或者去外地在只能连接网通网络的情况下, 这时在上电信服务器大区会导致延迟异常的高, 而这时如果使用改ip软件切换到电信线路就可以使延时降低, 大大提升游戏的流程度.</p>
+<p>2: 用于提高网络访问的安全性, 平时难免会遇到需要访问一些不信任站点或者可疑站点, 这样会带来一定的网络安全风险, 因为访问网络时候的数据传输很容易被黑客所控制, 特别是一些需要登录注册等等网站的时候, 泄露个人信息, 甚至银行卡信息, 带来的网络风险非常大.<br>
+而使用改ip软件以后, 你在网络上的访问数据被加密和隐藏, 避免了个人敏感信息的泄露, 网购的时候一旦泄露银行卡信息, 可能会带来钱财的损失, 通过改ip软件再进行网购, 会增加安全性, 当然, 必须是可靠的改ip软件服务商.</p>
+<p>3: 用于伪装某地区的IP有一些网络服务是必须本地IP才能使用的, 这个时候通过改ip软件选取一个此区域的线路连接, 使你的IP地址看起来就是该地区的IP地址, 从而可以享受到当地的一些特有的网络服务.</p>
+<p>4: 用于隐藏你的真实IP地址, 使用改ip软件加密你的网络数据传输, 从而达到匿名效果.</p>
+<h1 id="代理ip的作用">5.  代理ip的作用</h1>
+<p>在生活中难免碰到一些这样的问题, 例如在外面需要访问学校的FTP下载资料, 但是由于网络限制不能访问, 这时就可以通过代理ip (前提是该代理地址在该资源 的允许访问范围之内) 使用教育网内地址段代理服务器, 就可以用于对教育网开放的各类FTP下载上传, 以及各类资料查询共享等服务.<br>
+是不是很神奇呢, 那我们再来进一步的了解代理ip</p>
+<p>代理IP就是代理服务器, 功能就是代理网络用户去取得网络信息.<br>
+代理服务器是介于浏览器和Web服务器之间的一台服务器, 有了它之后, 浏览器不是直接到Web服务器去取回网页而是向代理服务器发出请求, Request信号会先送到代理服务器, 由代理服务器来取回浏览器所需要的信息并传送给你的浏览器如果浏览器所请求的数据在它本机的存储器上已经存在而且是最新的, 那么它就不重新从Web服务器取数据, 而直接将存储器上的数据传送给用户的浏览器, 这样就能显著提高浏览速度和效率.</p>
+<p>理论介绍完了, 那我们在来讲下代理ip常用的一些功能.</p>
+<p>1: 突破自身ip访问限制, 现在有许多的网站都对ip地址访问进行了限制, 这时则可以通过代理ip来突破限制, 让自己进入网站.</p>
+<p>2: 提高访问速度, 通常代理ip服务器都设置一个较大的硬盘缓冲区, 当有外信息市, 则直接由缓冲区中取出信息, 传给用户, 以提高访问速度.</p>
+<p>3隐藏真实ip达到匿名效果, 可以通过代理ip上网, 隐藏真实的ip地址, 避免受到黑客攻击.</p>
+<p>4突破ip封锁, 例如要抓取一个网站的数据, 但是网站对每个ip所能抓取的数据做了限制, 这时我们使用代理ip, 不停地切换ip, 就可以突破限制, 从而提高工作效率.</p>
+<h1 id="换ip软件和ip代理的区别">6.  换ip软件和ip代理的区别</h1>
+<p>在生活中我们可能会遇到各种问题需要修改ip, 不想让自己的电脑使用同一个ip, 当然也是因为做一些工作方便, 而换ip经常会用这两种方法, 使用换ip软件和ip代理.</p>
+<p>首先先来说一下换ip软件和ip代理的基本原理</p>
+<p>换ip软件是通过第三方网络协议传输数据的一种加密软件具体实现是采用隧道技术, 将数据封装在隧道中进行传输.<br>
+而隧道协议又可分为第二层隧道协议pptp, L2F, l2tp和第三隧道协GRE, lpsec.<br>
+他们的本质区别在于用户的数据包是被封装在哪种数据包中在隧道中传输的.</p>
+<p>ip代理则是内部网络客户端发送 Internet 连接请求时, NAT 协议驱动程序将截获该请求, 并将其转发到目标 Internet 服务器.</p>
+<p>从这里可以看出换ip软件可以说是全局代理 , 功能是连接上软件里的线路后, 会改变整机电脑的IP地址, 无论你上游戏还是看视频或者登QQ, 所显示的IP地址都会显示成修改后的IP地址.</p>
+<p>而ip代理则是局部代理 , 是非默认选项, 当然把这个选项打上后, 再进行线路连接才会生效.<br>
+而当ip代理的用图是用来改变浏览器的IP地址时不会影响到电脑上的其它软件的使用.<br>
+所以这时ip代理则可以理解为浏览器代理, 用来改变浏览网页时的ip.</p>
+<h1 id="resource">7.  Resource</h1>
+<p><a href="http://www.etdaili.com/Index-article-id-91.html" target="_blank" rel="noopener">http://www.etdaili.com/Index-article-id-91.html</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/uncategorized/1c97dba7/" rel="prev" title="crawler/网络爬虫的定义">
+      <i class="fa fa-chevron-left"></i> crawler/网络爬虫的定义
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/database/7b25d017/" rel="next" title="redis">
+      redis <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#网游加速器和换ip工具的区别"><span class="nav-number">1.</span> <span class="nav-text">1.  网游加速器和换ip工具的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pptp和l2tp的区别"><span class="nav-number">2.</span> <span class="nav-text">2.  PPTP和L2TP的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ip地址如何分类"><span class="nav-number">3.</span> <span class="nav-text">3.  IP地址如何分类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#改ip软件的作用"><span class="nav-number">4.</span> <span class="nav-text">4.  改ip软件的作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代理ip的作用"><span class="nav-number">5.</span> <span class="nav-text">5.  代理ip的作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#换ip软件和ip代理的区别"><span class="nav-number">6.</span> <span class="nav-text">6.  换ip软件和ip代理的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#resource"><span class="nav-number">7.</span> <span class="nav-text">7.  Resource</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1.  安装 1234wget http:&#x2F;&#x2F;download.redis.io&#x2F;releases&#x2F;redis-5.0.7.tar.gztar xzf redis-5.0.7.tar.gzcd redis-5.0.7make 2.  Redis 部署方式 Redis 部署方式 redis 部署方式及常见特性  singleton 单点 master-slave 主从 1 个 master, 多个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis">
+<meta property="og:url" content="https://ravenfu.github.io/posts/database/7b25d017/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="1.  安装 1234wget http:&#x2F;&#x2F;download.redis.io&#x2F;releases&#x2F;redis-5.0.7.tar.gztar xzf redis-5.0.7.tar.gzcd redis-5.0.7make 2.  Redis 部署方式 Redis 部署方式 redis 部署方式及常见特性  singleton 单点 master-slave 主从 1 个 master, 多个">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-09-03T15:46:02.000Z">
+<meta property="article:modified_time" content="2020-09-11T08:28:21.301Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/database/7b25d017/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>redis | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/database/7b25d017/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-09-03 23:46:02" itemprop="dateCreated datePublished" datetime="2017-09-03T23:46:02+08:00">2017-09-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 16:28:21" itemprop="dateModified" datetime="2020-09-11T16:28:21+08:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/database/" itemprop="url" rel="index"><span itemprop="name">database</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="安装">1.  安装</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.redis.io/releases/redis-5.0.7.tar.gz</span><br><span class="line">tar xzf redis-5.0.7.tar.gz</span><br><span class="line"><span class="built_in">cd</span> redis-5.0.7</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<h1 id="redis-部署方式">2.  Redis 部署方式</h1>
+<a href="https://blog.csdn.net/java_zyq/article/details/83818341" target="_blank" rel="noopener" title target>Redis 部署方式</a>
+<a href="https://www.cnblogs.com/guapiwangxi/p/10556812.html" target="_blank" rel="noopener" title target>redis 部署方式及常见特性</a>
+<ul>
+<li>singleton 单点</li>
+<li>master-slave 主从<br>
+1 个 master, 多个 slaves<br>
+master 可以读和写, slaves 只能读不能写<br>
+master 挂掉之后, redis 不能提供写服务, 不影响从 slaves 上读取; slave 挂掉之后, 不影响 redis 服务, 可以重启 slave 节点, 之后会从 master 上同步数据过来<br>
+master 挂掉之后, slave 无法自动推举 master 节点. 如果 master 没有备份数据, 直接重启 master 将丢失所有 slaves 上的数据</li>
+<li>sentinel 哨兵<br>
+sentinel 模式建立在主从模式之上, 如果是单点 redis, sentinel 就没有意义<br>
+当 master 挂掉之后, 由 sentinel 选择一个 slave 作为 master, 并修改其他 slaves 的配置, 让他们指向新的 master. 挂掉的 master 重启后将作为 slave, 同步新的 master 上的数据<br>
+sentinel 是一个高可用的方案, 防止主从模式中 master 挂掉之后, 无法自动恢复的问题. sentinel 作为方案的一部分, 本身也需要集群, 防止单点故障.<br>
+一个 sentinel 或 sentinel 集群可以管理多个主从 redis.<br>
+客户端不直接连 redis, 而是由 sentinel 提供可用 master 的连接地址.<br>
+由于数据的保存还是依靠 master, 无法突破单台服务器内存大小的限制.</li>
+<li>cluster 集群<br>
+cluster 多主多从, 多个 master 通过分片共同管理数据, 解决单台服务器容量问题.<br>
+master 挂掉后, 自动选择其 slave 节点作为 master.<br>
+容易增加或减少节点.</li>
+</ul>
+<h2 id="redis-集群">2.1.  Redis 集群</h2>
+<a href="http://www.redis.cn/topics/cluster-tutorial.html" target="_blank" rel="noopener" title target>Redis 集群教程</a>
+<h3 id="redis-集群中的数据分片">2.1.1.  Redis 集群中的数据分片</h3>
+<p>Redis 集群共有 16384 (2^14) 个哈希槽, 每个 key 通过 CRC16 校验后与 16384 取模来决定放在哪个槽.<br>
+集群中的每个节点负责一部分哈希槽.<br>
+这种结构很容易添加和删除节点.<br>
+比如如果我想新添加个节点D, 我需要从节点 A, B, C中得部分槽到D上. 如果我想移除节点A,需要将A中的槽移到B和C节点上,然后将没有任何槽的A节点从集群中移除即可. 由于从一个节点将哈希槽移动到另一个节点并不会停止服务,所以无论添加删除或者改变某个节点的哈希槽的数量都不会造成集群不可用的状态.</p>
+<h3 id="主从复制方式">2.1.2.  主从复制方式</h3>
+<a href="http://www.redis.cn/topics/replication.html" target="_blank" rel="noopener" title target>复制</a>
+<ul>
+<li>完整同步</li>
+<li>部分同步</li>
+<li>命令传播</li>
+</ul>
+<p>当 slave 连接 master 时, 发送 <code>PSYNC $runId $offset</code> 请求同步.<br>
+master 根据情况判断是完整同步还是部分同步.</p>
+<p><code>$runId</code> 是 slave 记录的 master 节点的 runId, 如果没有则说明 slave 是首次连接 master; 如果与 master 自己的 runId 不一致, 则说明 slave 断开后重新连接的不是之前的 master. 以上 2 中情况都需要完整同步.<br>
+<code>$offset</code> 是 slave 当前的命令偏移量. master 接收到的命令会在内存中保存到 replica backlog 中. 如果 slave 传过来的 offset 还在 backlog 范围内, 且 runId 一致, 则可以使用部分同步, 否则可能 slave 断开时间过长, 需要使用完整同步.</p>
+<h2 id="主从复制方式-2">2.2.  主从复制方式</h2>
+<a href="https://www.jianshu.com/p/0e1ff8ea22bc" target="_blank" rel="noopener" title target>Redis的全量复制和部分复制</a>
+<h1 id="redis-持久化">3.  Redis 持久化</h1>
+<a href="http://www.redis.cn/topics/persistence.html" target="_blank" rel="noopener" title target>持久化</a>
+<ul>
+<li>
+<p>RDB<br>
+保存的是数据库的状态</p>
+</li>
+<li>
+<p>AOF<br>
+Append Only File, 保存的是数据库执行过的命令</p>
+<p>同步(fsync)策略:<br>
+- always 每次都将 aof_buf 缓冲区同步到 AOF 文件<br>
+- everysec 每隔 1 秒将 aof_buf 缓冲区同步到 AOF 文件<br>
+- no 何时同步交由操作系统决定</p>
+<p>如果 AOF 文件过大, 会自动通过 REWRITEAOF 命令重写 AOF 文件</p>
+</li>
+</ul>
+<p>RDB 文件一般比 AOF 文件小, 所以一般执行速度会快于 AOF 文件<br>
+系统出现异常时, AOF 比 RDB 丢失数据更少<br>
+如果 Redis 同时配置了这两中备份方式, 启动时会优先选择加载 AOF 文件.</p>
+<h1 id="redis-事务">4.  Redis 事务</h1>
+<p>关键字:</p>
+<ul>
+<li>WATCH 通过 CAS 监听多个 key 值是否变化, 如果变化则取消事务</li>
+<li>MULTI</li>
+<li>EXEC</li>
+<li>DISCARD</li>
+</ul>
+<p>如果一个事务在入队过程中发生错误, 如命令不正确, 找不到等语法错误, Redis 将拒绝执行该事务.<br>
+如果一个事务在执行过程中发生错误, 事务将继续执行, 且不影响已经执行的命令, 即 Redis 不支持回滚.</p>
+<h1 id="redis-内存清理">5.  Redis 内存清理</h1>
+<h2 id="redis-过期键删除策略">5.1.  Redis 过期键删除策略</h2>
+<ul>
+<li>惰性删除<br>
+放任键过期不管, 但是每次从键空间中获取键时, 都检查取得的键是否过期, 如果过期就删除该键, 如果没有过期就返回该键.</li>
+<li>定期删除<br>
+每隔一段时间, 程序就对数据库进行一次检查, 删除里面的过期键.<br>
+Redis 会在规定时间内多次随机检查一部分键的过期时间, 如果过期则删除.</li>
+</ul>
+<h2 id="最大内存策略">5.2.  最大内存策略</h2>
+<a href="http://www.redis.cn/topics/lru-cache.html" target="_blank" rel="noopener" title target>lru-cache</a>
+<p>maxmemory 设置最大可用内存, 0 表示没有内存限制, redis就会一直向OS申请内存, 直到OS的所有内存都被使用完. 所以通常建议设置上redis的内存限制.<br>
+设置了maxmemory后, 当redis的内存达到内存限制后, 再向redis发送写指令, 会返回一个内存耗尽的错误. 错误通常会触发一个应用程序错误, 但是不会导致整台机器宕掉.</p>
+<p>maxmemory-policy 设置内存回收策略</p>
+<ul>
+<li>noeviction: 返回错误当内存限制达到并且客户端尝试执行会让更多内存被使用的命令 (大部分的写入指令, 但DEL和几个例外)</li>
+<li>allkeys-lru: 尝试回收最少使用的键 (LRU) , 使得新添加的数据有空间存放.</li>
+<li>allkeys-random: 回收随机的键使得新添加的数据有空间存放.</li>
+<li>volatile-lru: 尝试回收最少使用的键 (LRU) , 但仅限于在过期集合的键,使得新添加的数据有空间存放.</li>
+<li>volatile-random: 回收随机的键使得新添加的数据有空间存放, 但仅限于在过期集合的键.</li>
+<li>volatile-ttl: 回收在过期集合的键, 并且优先回收存活时间 (TTL) 较短的键,使得新添加的数据有空间存放.</li>
+</ul>
+<p>如果键分布比较均匀, 则使用 random 策略<br>
+如果需要保留热点访问数据, 则使用 lru 策略<br>
+如果需要根据键的过期时长回收, 则使用 ttl 策略</p>
+<p>Redis 接收到写操作后, 先检查内存是否足够, 如果不够, 则执行回收策略释放内存.<br>
+随机从键空间中获取 maxmemory-samples 个键, 根据策略淘汰.</p>
+<h3 id="近似-lru">5.2.1.  近似 LRU</h3>
+<p>Redis的LRU算法并非完整的实现. 这意味着Redis并没办法选择最佳候选来进行回收, 也就是最久未被访问的键.<br>
+相反它会尝试运行一个近似LRU的算法, 通过对少量keys进行取样, 然后回收其中一个最好的key (被访问时间较早的) .</p>
+<p>maxmemory-samples 设置随机采样的精度, 默认是 5, 值越大越接近真是的 LRU 算法, 但 CPU 消耗也越大, 执行效率越低.</p>
+<h2 id="redis-一致性保证">5.3.  Redis 一致性保证</h2>
+<p>什么时候 Redis 会出现丢失数据的情况?</p>
+<ol>
+<li>Redis 为了保证性能, 主从节点之间是异步复制, 当主节点异常挂掉之后切换从节点时可能会有部分数据丢失</li>
+<li>集群模式中, 如果碰到网络分区的情况, 由于会同时存在 2 个 master 节点, 之后其中一个会被降为 slave, 从脑裂到恢复正常一段时间内的数据会丢失 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">min-replicas-to-write 3 # 最少连接到 master 的 slave 数量</span><br><span class="line">min-replicas-max-lag 10 # master 和 slaves 之间同步的最大延迟</span><br></pre></td></tr></table></figure>
+通过以上配置, master 的副本数量不能少于 3 个, 且同步副本的延时不能超过 10 秒, 否则 master 将会拒绝写入请求, 减少数据同步后的数据丢失.</li>
+</ol>
+<h1 id="resource">6.  Resource</h1>
+<ul>
+<li>
+<a href="https://baijiahao.baidu.com/s?id=1606949562222634865&wfr=spider&for=pc" target="_blank" rel="noopener" title target>Redis 性能参数</a>
+</li>
+<li><a href="https://redis.io/download" target="_blank" rel="noopener">https://redis.io/download</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/uncategorized/23b471ef/" rel="prev" title="crawler/代理">
+      <i class="fa fa-chevron-left"></i> crawler/代理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/database/9520183a/" rel="next" title="mysql">
+      mysql <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">1.  安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis-部署方式"><span class="nav-number">2.</span> <span class="nav-text">2.  Redis 部署方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#redis-集群"><span class="nav-number">2.1.</span> <span class="nav-text">2.1.  Redis 集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#redis-集群中的数据分片"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1.  Redis 集群中的数据分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主从复制方式"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2.  主从复制方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主从复制方式-2"><span class="nav-number">2.2.</span> <span class="nav-text">2.2.  主从复制方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis-持久化"><span class="nav-number">3.</span> <span class="nav-text">3.  Redis 持久化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis-事务"><span class="nav-number">4.</span> <span class="nav-text">4.  Redis 事务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis-内存清理"><span class="nav-number">5.</span> <span class="nav-text">5.  Redis 内存清理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#redis-过期键删除策略"><span class="nav-number">5.1.</span> <span class="nav-text">5.1.  Redis 过期键删除策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最大内存策略"><span class="nav-number">5.2.</span> <span class="nav-text">5.2.  最大内存策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#近似-lru"><span class="nav-number">5.2.1.</span> <span class="nav-text">5.2.1.  近似 LRU</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis-一致性保证"><span class="nav-number">5.3.</span> <span class="nav-text">5.3.  Redis 一致性保证</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#resource"><span class="nav-number">6.</span> <span class="nav-text">6.  Resource</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

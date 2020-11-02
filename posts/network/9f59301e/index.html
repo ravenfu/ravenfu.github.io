@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ravenfu.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="CORS, Cross-Origin Resources Sharing, 跨域资源共享. 允许浏览器向跨域服务器请求资源, 从而让AJAX克服同源策略. CORS需要浏览器和服务器同时支持. 随着W3C标准的推动, 目前所有浏览器都支持CORS. CORS请求与同源的AJAX请求代码没有差别. 但当浏览器发现AJAX请求跨域资源时, 会自动添加一些附加的头信息, 有时还会多出一次附加的请求. 整">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CORS">
+<meta property="og:url" content="https://ravenfu.github.io/posts/network/9f59301e/">
+<meta property="og:site_name" content="Raven&#39;s Wiki">
+<meta property="og:description" content="CORS, Cross-Origin Resources Sharing, 跨域资源共享. 允许浏览器向跨域服务器请求资源, 从而让AJAX克服同源策略. CORS需要浏览器和服务器同时支持. 随着W3C标准的推动, 目前所有浏览器都支持CORS. CORS请求与同源的AJAX请求代码没有差别. 但当浏览器发现AJAX请求跨域资源时, 会自动添加一些附加的头信息, 有时还会多出一次附加的请求. 整">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-03-28T05:24:21.000Z">
+<meta property="article:modified_time" content="2020-09-11T07:49:35.152Z">
+<meta property="article:author" content="Raven">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ravenfu.github.io/posts/network/9f59301e/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CORS | Raven's Wiki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Wiki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">清风皓月任我飞~~~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ravenfu.github.io/posts/network/9f59301e/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Wiki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CORS
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-03-28 13:24:21" itemprop="dateCreated datePublished" datetime="2018-03-28T13:24:21+08:00">2018-03-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-11 15:49:35" itemprop="dateModified" datetime="2020-09-11T15:49:35+08:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/network/" itemprop="url" rel="index"><span itemprop="name">network</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>CORS, Cross-Origin Resources Sharing, 跨域资源共享.<br>
+允许浏览器向跨域服务器请求资源, 从而让AJAX克服同源策略.<br>
+CORS需要浏览器和服务器同时支持.<br>
+随着W3C标准的推动, 目前所有浏览器都支持CORS.</p>
+<p>CORS请求与同源的AJAX请求代码没有差别.<br>
+但当浏览器发现AJAX请求跨域资源时, 会自动添加一些附加的头信息, 有时还会多出一次附加的请求.<br>
+整个过程有浏览器自动完成, 不需要用户参与.</p>
+<h1 id="2种请求模式">1.  2种请求模式</h1>
+<h2 id="简单模式">1.1.  简单模式</h2>
+<p>简单模式, 浏览器直接向服务器发起简单类型跨域请求, 浏览器与服务器之间请求只进行一次.</p>
+<p>需要满足以下2个条件:</p>
+<ol>
+<li>使用下列方法之一:</li>
+</ol>
+<ul>
+<li>GET</li>
+<li>HEAD</li>
+<li>POST</li>
+</ul>
+<ol start="2">
+<li>HTTP的头信息不超过以下几种:</li>
+</ol>
+<ul>
+<li>Accept</li>
+<li>Accept-Languagebkk</li>
+<li>Content-Language</li>
+<li>Last-Event-ID</li>
+<li>Content-Type, 该字段值必须是application/x-www-form-urlencoded, multipart/form-data, 或text/plain.</li>
+</ul>
+<p>不满足简单模式的条件, 则需要使用预检模式.</p>
+<h3 id="简单模式流程">1.1.1.  简单模式流程</h3>
+<p>浏览器发现AJAX请求为跨域请求, 且是简单模式, 就会自动在头信息中添加<code>Origin</code>字段.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;cors HTTP&#x2F;1.1</span><br><span class="line">Origin: http:&#x2F;&#x2F;api.bob.com</span><br><span class="line">Host: api.alice.com</span><br><span class="line">Accept-Language: en-US</span><br><span class="line">Connection: keep-alive</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0...</span><br></pre></td></tr></table></figure>
+<p><code>Origin</code>字段说明了本次请求来自哪个域(协议, 域名及端口).<br>
+服务器根据该字段, 决定是否同一这是请求.</p>
+<p>如果<code>Origin</code>指定的域不在许可返回内, 服务器就会返回一个正常的HTTP响应, 且响应头中不包含<code>Access-Control-Allow-Origin</code>字段.<br>
+浏览器发现没有<code>Access-Control-Allow-Origin</code>字段, 就知道出错了.<br>
+跨域请求失败无法通过状态码来识别, 因为状态码有可能是200.</p>
+<p>如果<code>Origin</code>指定的域在许可返回内, 那服务器返回的响应, 会多出几个头信息字段.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Allow-Origin: http:&#x2F;&#x2F;api.bob.com</span><br><span class="line">Access-Control-Allow-Credentials: true</span><br><span class="line">Access-Control-Expose-Headers: FooBar</span><br><span class="line">Content-Type: text&#x2F;html; charset&#x3D;utf-8</span><br></pre></td></tr></table></figure>
+<h3 id="access-control-allow-origin">1.1.2.  Access-Control-Allow-Origin</h3>
+<p>该字段在响应头中必定存在, 标识哪些域允许跨域.<br>
+可以是域列表;也可以是<code>*</code>, 表示允许任意域.</p>
+<h3 id="access-control-allow-credentials">1.1.3.  Access-Control-Allow-Credentials</h3>
+<p>CORS请求默认不发送Cookie.<br>
+如果服务器不需要Cookie, 则删除该自动即可.<br>
+<code>Access-Control-Allow-Credentials</code>若为true, 则<code>Access-Control-Allow-Origin</code>不能为<code>*</code>, 这也是出于安全考虑.</p>
+<p>若需要发送Cookie, 则需要:</p>
+<ol>
+<li>客户端设置AJAX请求打开<code>withCredentials</code>属性:</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var xhr &#x3D; new XMLHttpRequest();bkk</span><br><span class="line">xhr.withCredentials &#x3D; true;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>服务器明确同意接收Cookie</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Allow-Credentials: true</span><br></pre></td></tr></table></figure>
+<h3 id="access-control-expose-headers">1.1.4.  Access-Control-Expose-Headers</h3>
+<p>XMLHttpRequest对象的getResponseHeader()方法只能拿到6个基本字段:Cache-Control, Content-Language, Content-Type, Expires, Last-Modified, Pragma.<br>
+如果需要获取其他字段, 就必须在<code>Access-Control-Expose-Headers</code>中指定.</p>
+<h2 id="预检模式-preflight">1.2.  预检模式 preflight</h2>
+<p>预检模式, 会在正式请求之前, 先发起一次预检请求.<br>
+先询问服务器, 当前域是否在许可范围内, 允许哪些请求方法以及需要哪些头信息字段.<br>
+只有得到服务器肯定答复后, 才会发起正式的请求, 否则报错.</p>
+<h3 id="预检请求">1.2.1.  预检请求</h3>
+<p>当浏览器发现, 这是一个非简单模式的请求, 就会自动发起一个<code>预检请求</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">OPTIONS &#x2F;cors HTTP&#x2F;1.1</span><br><span class="line">Origin: http:&#x2F;&#x2F;api.bob.com</span><br><span class="line">Access-Control-Request-Method: PUT</span><br><span class="line">Access-Control-Request-Headers: X-Custom-Header</span><br><span class="line">Host: api.alice.com</span><br><span class="line">Accept-Language: en-US</span><br><span class="line">Connection: keep-alive</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0...</span><br></pre></td></tr></table></figure>
+<p><code>预检请求</code>使用<code>OPTIONS</code>方法, 表示用来询问的.<br>
+同样也有<code>Origin</code>关键字段.</p>
+<h3 id="access-control-request-method">1.2.2.  Access-Control-Request-Method</h3>
+<p>该字段用来列出CORS请求会用到哪些HTTP方法, 如上面的<code>PUT</code>.</p>
+<h3 id="access-control-request-headers">1.2.3.  Access-Control-Request-Headers</h3>
+<p>该字段值是一个以逗号分隔的字符串, 用来指定浏览器CORS请求会额外发送的头信息字段, 如上面的<code>X-Custom-Header</code>.</p>
+<h3 id="预检请求响应">1.2.4.  预检请求响应</h3>
+<p>服务器收到<code>预检请求</code>, 检查<code>Origin</code>, <code>Access-Control-Request-Method</code>, <code>Access-Control-Request-Headers</code>.</p>
+<p>如果服务器否定了<code>预检请求</code>, 会返回一个正常的HTTP响应, 但其中不包括<code>Access-Control-*</code>.<br>
+浏览器会认定为不同意<code>预检请求</code>, 触发错误.<br>
+控制台会打印如下报错信息:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XMLHttpRequest cannot load http:&#x2F;&#x2F;api.alice.com.</span><br><span class="line">Origin http:&#x2F;&#x2F;api.bob.com is not allowed by Access-Control-Allow-Origin.</span><br></pre></td></tr></table></figure>
+<p>如果确认允许跨域, 给出回应.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">HTTP&#x2F;1.1 200 OK</span><br><span class="line">Date: Mon, 01 Dec 2008 01:15:39 GMT</span><br><span class="line">Server: Apache&#x2F;2.0.61 (Unix)</span><br><span class="line">Access-Control-Allow-Origin: http:&#x2F;&#x2F;api.bob.com</span><br><span class="line">Access-Control-Allow-Methods: GET, POST, PUT</span><br><span class="line">Access-Control-Allow-Headers: X-Custom-Header</span><br><span class="line">Access-Control-Allow-Credentials: true</span><br><span class="line">Access-Control-Max-Age: 1728000</span><br><span class="line">Content-Type: text&#x2F;html; charset&#x3D;utf-8</span><br><span class="line">Content-Encoding: gzip</span><br><span class="line">Content-Length: 0</span><br><span class="line">Keep-Alive: timeout&#x3D;2, max&#x3D;100</span><br><span class="line">Connection: Keep-Alive</span><br><span class="line">Content-Type: text&#x2F;plain</span><br></pre></td></tr></table></figure>
+<p>确认通过预检请求之后, 才会发起正常CORS请求, 流程与简单模式一样.</p>
+<h3 id="access-control-allow-methods">1.2.5.  Access-Control-Allow-Methods</h3>
+<p>该字段必须, 为了避免多次预检, 返回的是服务器支持的所有跨域请求方法.</p>
+<h3 id="access-control-allow-headers">1.2.6.  Access-Control-Allow-Headers</h3>
+<p>如果浏览器请求包括<code>Access-Control-Allow-Headers</code>, 则响应中也必须有该字段.<br>
+同样包含了所有服务器支持的头信息字段, 防止多次预检.</p>
+<h3 id="access-control-max-age">1.2.7.  Access-Control-Max-Age</h3>
+<p>可选字段, 表示预检请求有效期, 单位为秒．<br>
+如上面的1728000, 则表示20天内不用发起另一条预检．</p>
+<h1 id="resource">2.  Resource</h1>
+<ul>
+<li><a href="http://www.ruanyifeng.com/blog/2016/04/cors.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2016/04/cors.html</a></li>
+<li><a href="https://www.w3.org/TR/cors/" target="_blank" rel="noopener">https://www.w3.org/TR/cors/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/network/f47645ae/" rel="prev" title="url">
+      <i class="fa fa-chevron-left"></i> url
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/security/c912f7f/" rel="next" title="web-security">
+      web-security <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2种请求模式"><span class="nav-number">1.</span> <span class="nav-text">1.  2种请求模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单模式"><span class="nav-number">1.1.</span> <span class="nav-text">1.1.  简单模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单模式流程"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1.1.  简单模式流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#access-control-allow-origin"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.1.2.  Access-Control-Allow-Origin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#access-control-allow-credentials"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.1.3.  Access-Control-Allow-Credentials</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#access-control-expose-headers"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.1.4.  Access-Control-Expose-Headers</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预检模式-preflight"><span class="nav-number">1.2.</span> <span class="nav-text">1.2.  预检模式 preflight</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#预检请求"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1.  预检请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#access-control-request-method"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2.  Access-Control-Request-Method</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#access-control-request-headers"><span class="nav-number">1.2.3.</span> <span class="nav-text">1.2.3.  Access-Control-Request-Headers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预检请求响应"><span class="nav-number">1.2.4.</span> <span class="nav-text">1.2.4.  预检请求响应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#access-control-allow-methods"><span class="nav-number">1.2.5.</span> <span class="nav-text">1.2.5.  Access-Control-Allow-Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#access-control-allow-headers"><span class="nav-number">1.2.6.</span> <span class="nav-text">1.2.6.  Access-Control-Allow-Headers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#access-control-max-age"><span class="nav-number">1.2.7.</span> <span class="nav-text">1.2.7.  Access-Control-Max-Age</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#resource"><span class="nav-number">2.</span> <span class="nav-text">2.  Resource</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">456</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://ravenfu.github.io/" title="GitHub → https:&#x2F;&#x2F;ravenfu.github.io"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
